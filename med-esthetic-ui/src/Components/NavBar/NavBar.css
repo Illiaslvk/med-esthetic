@@ -1,0 +1,141 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px -2px black;
+  background-color: papayawhip;
+  padding: 16px; 
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-logo img {
+  max-height: 40px; 
+}
+
+.nav-logo p {
+  color: #171717;
+  font-size: 24px; 
+  font-weight: 600;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 30px;
+  color: #635447;
+  font-size: 16px;
+  font-weight: 500;
+  margin-left: -20px; 
+}
+
+.nav-menu li {
+  position: relative;
+  cursor: pointer;
+}
+
+.nav-menu li a {
+  text-decoration: none;
+  color: #635447;
+}
+
+.nav-menu hr {
+  position: absolute;
+  bottom: -5px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  border: none;
+  width: 60%;
+  height: 2px;
+  border-radius: 5px;
+  background: black;
+  /* visibility: hidden;  */
+  transition: visibility 0s, opacity 0.5s linear; 
+}
+
+.nav-menu li:hover hr {
+  visibility: visible;
+  opacity: 1;
+}
+
+.nav-login {
+  display: flex;
+  align-items: center;
+}
+
+.nav-login button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.user-dropdown {
+  position: relative;
+}
+
+.user-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #e0cebb;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: none;
+  
+}
+
+.user-dropdown:hover .user-options {
+  display: block;
+}
+
+.user-options a,
+.user-options button {
+  text-decoration: none;
+  color:  #635447;
+  display: block;
+  padding: 8px;
+}
+
+/* .user-options a:hover,
+.user-options button:hover {
+  background-color: #f0f0f0;
+} */
+
+.login-link {
+  text-decoration: none;
+  color: #635447;
+}
+
+.login-button {
+  background-color: #635447;
+  color: #635447;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px; 
+}
+
+.login-button:hover {
+  background-color: #e0cebb; 
+}
+
+.options {
+  text-decoration: none;
+  color: #635447;
+  background-color: #e0cebb;
+  border: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.options:hover {
+  background-color: #c4b29e;
+}

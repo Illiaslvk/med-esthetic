@@ -1,0 +1,64 @@
+.YourAppointments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: papayawhip;
+  padding: 15px;
+}
+
+.mainhead1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.yourappointmentstable {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  margin-top: 20px;
+}
+
+.yourappointmentstable thead tr {
+  background-color: #635447; /* Update color to match user sidebar */
+  color: #fff;
+  border: 1px solid #ddd;
+}
+
+.yourappointmentstable tr {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+}
+
+.yourappointmentstable th,
+.yourappointmentstable td {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.yourappointmentstable th {
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.yourappointmentstable td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.yourappointmentstable tr td button {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.yourappointmentstable tr td .mainbutton1 {
+  background-color: #c4b29e; /* Update color to match user sidebar */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
