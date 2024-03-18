@@ -18,7 +18,7 @@ const UserProfile = () => {
         <div className="right">
           {activepage === "accountsettings" && <AccountSettings />}
           {activepage === "changepassword" && <ChangePassword />}
-          {activepage === "yourappos" && <YourAppointments />}
+          {activepage === "appointments" && <YourAppointments />}
         </div>
       </div>
     </div>

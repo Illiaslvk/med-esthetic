@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.Set;
 
-// JpaRepository inherits the CRUD functionality from CrudRepository and adds additional methods for pagination and sorting.
+// JpaRepository inherits the CRUD functionality from CrudRepository and adds additional methods for sorting e.t.c
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -16,10 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByFirstNameAndLastName(String firstName, String lastName);
 
-    /*
-       find user by the role(so on startup check, if admin account not in our database
-       then we can create an admin acc) otherwise skip process
-    */
+    //find user by the role(so on startup check, if admin account not in our database then we can create an admin acc) otherwise skip process
     User findByRole(Role role);
 
     //for React Login/NavBar

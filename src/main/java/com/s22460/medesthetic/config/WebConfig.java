@@ -21,11 +21,11 @@ public class WebConfig {
     private static final int CORS_FILTER_ORDER = -102;
 
     @Bean
-    public FilterRegistrationBean corsFilter(){
+    public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000/");
+        config.addAllowedOrigin("http://localhost:3000");
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.CONTENT_TYPE,
@@ -37,16 +37,11 @@ public class WebConfig {
                 HttpMethod.PUT.name(),
                 HttpMethod.DELETE.name()
         ));
+        //return a CorsFilter bean directly instead of a FilterRegistrationBean
         config.setMaxAge(MAX_AGE);
         source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(CORS_FILTER_ORDER);
-        return bean;
-
-        //return a CorsFilter bean directly instead of a FilterRegistrationBean
-        //config.setMaxAge(MAX_AGE);
-        //        source.registerCorsConfiguration("/**", config);
-        //        return new CorsFilter(source);
+        return new CorsFilter(source);
     }
+
 
 }

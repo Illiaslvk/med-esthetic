@@ -1,41 +1,44 @@
 import "./App.css"
-import NavBar from "./Components/NavBar/NavBar"
+import React, { useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import NavBar from "./Components/NavBar/NavBar"
 import Home from "./Pages/Home/Home"
 import Services from "./Pages/ServiceWindow/Services"
 import Reviews from "./Pages/Reviews/Reviews"
 import Appointment from "./Pages/Appointment/Appointment"
 import LoginSignup from "./Pages/LoginSignup/LoginSignup"
 import Footer from "./Components/Footer/Footer"
-import React, { useState } from "react"
-import UserProfile from './Pages/User/UserProfile'
-import Admin from "./Components/Admin"
+import UserProfile from "./Pages/User/UserProfile"
+import Admin from "./Pages/Admin/Admin"
+import ErrorBoundary from "./Components/ErrorBoundary"
 
 function App() {
-  
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   return (
-    <div>
-      <BrowserRouter>
-        <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/reviews" element={<Reviews />} />
-          <Route path="/appointment" element={<Appointment />} />
-          
-          {/* My Profile */}
-          <Route path='/user/:activepage' element={<UserProfile />} />
-          <Route path="/admin" element={<Admin />} />
+    <div className="App">
+      <ErrorBoundary>
+        <BrowserRouter>
+          <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
 
-          <Route
-            path="/login"
-            element={<LoginSignup setIsLoggedIn={setIsLoggedIn} />}
-          />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route path="/appointment" element={<Appointment />} />
+
+            {/* My Profile */}
+            <Route path="/user/:activepage" element={<UserProfile />} />
+            <Route path="/admin" element={<Admin />} />
+
+            <Route
+              path="/login"
+              element={<LoginSignup setIsLoggedIn={setIsLoggedIn} />}
+            />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      </ErrorBoundary>
     </div>
   )
 }

@@ -7,6 +7,7 @@ import com.s22460.medesthetic.dtos.auth.SigninRequest;
 import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.utils.Role;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,34 +40,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     // validate user credentials
-    public JwtAuthenticationResponse signin(SigninRequest signinRequest) {
+    public JwtAuthenticationResponse signin(SigninRequest signinRequest, HttpServletResponse response) {
         try {
-            // Authenticate user using Spring Security's AuthenticationManager
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     signinRequest.getEmail(), signinRequest.getPassword()));
 
-            // Retrieve user details from the database
-            User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+            User user = userRepository.findByEmail(signinRequest.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
-            // Generate JWT and refresh token
             String jwt = jwtService.generateToken(user);
-            String refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
+            String refreshToken = jwtService.generateTokenBasedOnRole(user);
 
-            // Create and return JwtAuthenticationResponse with user details 07.12.2023
-            JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
-            jwtAuthenticationResponse.setToken(jwt);
-            jwtAuthenticationResponse.setRefreshToken(refreshToken);
-            jwtAuthenticationResponse.setUserDetails(user);
+            JwtAuthenticationResponse jwtResponse = new JwtAuthenticationResponse();
+            jwtResponse.setToken(jwt);
+            jwtResponse.setRefreshToken(refreshToken);
 
-            return jwtAuthenticationResponse;
+            return jwtResponse;
         } catch (AuthenticationException e) {
-            // Handle authentication failure
             throw new IllegalArgumentException("Invalid email or password");
         }
     }
 
     public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
-        String userEmail = jwtService.exctractUserName(refreshTokenRequest.getToken());
+        String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
         User user = userRepository.findByEmail(userEmail).orElseThrow();
         // Check if the refresh token is valid and generate a new JWT
         if(jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
@@ -80,6 +76,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         return null;
     }
-
 
 }

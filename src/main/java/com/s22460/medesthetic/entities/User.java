@@ -4,6 +4,7 @@ import com.s22460.medesthetic.utils.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,7 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING) // Store as string
+    @NotNull
     private Role role;
 
     // Connections

@@ -2,18 +2,25 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Libre Franklin", sans-serif;
+}
+
+.App{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
   background-color: #ffffff;
-  font-family: 'Libre Franklin', sans-serif;
+  font-family: "Libre Franklin", sans-serif;
   color: black;
   background: url("/src/Components/Images/bg.png");
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.stylenone{
+.stylenone {
   text-decoration: none;
   color: inherit;
 }

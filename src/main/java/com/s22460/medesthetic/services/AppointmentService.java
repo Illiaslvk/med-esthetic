@@ -14,8 +14,6 @@ public interface AppointmentService {
     Appointment getAppointmentById(Long appointmentId);
     List<Appointment> getAllCanceledAppointments();
 
-    //Appo possibilities
-//    Appointment addAppointment(Appointment appointment, Long serviceId);
     Appointment createAppointment(CreateAppointmentRequestDTO requestDTO);
     Appointment cancelAppointment(Long appointmentId, String cancellationReason);
 

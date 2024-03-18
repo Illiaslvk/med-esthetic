@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -21,26 +22,39 @@ public class JWTServiceImpl implements JWTService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
+    private static final long ACCESS_TOKEN_EXPIRATION = 2*60 * 1000; // 2 minutes
+    private static final long REFRESH_TOKEN_EXPIRATION = 2 * 60 * 60 * 1000; // 2 hours
+    private static final long ADMIN_REFRESH_TOKEN_EXPIRATION = 12 * 60 * 60 * 1000; // 12 hours for admin
+
     public String generateToken(UserDetails userDetails){
         // System.currentTimeMillis() + 1000 * 60 * 24
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))) // 24hours
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+    public String generateTokenBasedOnRole(UserDetails userDetails) {
+        long expiration = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))
+                ? ADMIN_REFRESH_TOKEN_EXPIRATION
+                : REFRESH_TOKEN_EXPIRATION;
+        return generateTokenWithExpiration(userDetails, expiration);
+    }
 
-    public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails){
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+    private String generateTokenWithExpiration(UserDetails userDetails, long expiration) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7)))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     @Override
-    public String exctractUserName(String token) {
+    public String extractUserName(String token) {
         return extraClaim(token, Claims::getSubject); // will return email stored in particular token
     }
 
@@ -61,13 +75,42 @@ public class JWTServiceImpl implements JWTService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails){
-        final String username = exctractUserName(token);
+        final String username = extractUserName(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private boolean isTokenExpired(String token){
-        // take expiration from our token and check if the expiration before our date || verify the date
-        return extraClaim(token, Claims::getExpiration).before(new Date());
+    private boolean isTokenExpired(String token) {
+        return extractAllClaims(token).getExpiration().before(new Date());
+    }
+
+    public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
+        try {
+            // Check if the token is expired
+            Claims claims = extractAllClaims(token);
+            if (claims.getExpiration().before(new Date())) {
+                return false;
+            }
+
+            // Check if the token's subject matches the user's username
+            String username = claims.getSubject();
+            if (username == null || !username.equals(userDetails.getUsername())) {
+                return false;
+            }
+
+            return true; // valid
+        } catch (Exception e) {
+            return false; // invalid
+        }
+    }
+    public boolean shouldTokenBeRefreshed(String token) {
+        Date expirationDate = extractAllClaims(token).getExpiration();
+        // Define how close to expiration a token needs to be to trigger a refresh
+        long refreshThreshold = 1 * 60 * 1000; // 2 minutes
+        return new Date(System.currentTimeMillis() + refreshThreshold).after(expirationDate);
+    }
+
+    public long getAccessTokenExpiration() {
+        return ACCESS_TOKEN_EXPIRATION;
     }
 
 }

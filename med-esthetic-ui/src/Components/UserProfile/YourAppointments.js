@@ -1,71 +1,65 @@
-import React, { useState } from 'react';
-import './YourAppointments.css'; 
+import React, { useState, useEffect } from 'react';
+import './UserProfile.css';
+import {request} from "../../Pages/api/axios_helper";
 
 const YourAppointments = () => {
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(0);
-//  const [appointmentsuccesscont, setAppointmentsuccesscont] = useRecoilState(appointmentSuccessfulProvider);
   const [appointmentData, setAppointmentData] = useState([]);
-  
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:8080/api/appointments');
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch appointment data');
-  //       }
-  //       const data = await response.json();
-  //       setAppointmentData(data);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
 
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const response = await request('GET', '/appointments', {});
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch appointment data');
+        }
+        setAppointmentData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchAppointments();
+  }, []); // Empty dependency array to ensure the effect runs only once on component mount
 
   const handleViewAppointment = (appointmentId) => {
     setSelectedAppointmentId(appointmentId);
-    //setAppointmentsuccesscont(true);
   };
 
   return (
-    <div className='YourAppointments'>
-      <h1 className='mainhead1'>Your Appointments</h1>
-      {/* {appointmentsuccesscont && (
-        <AppointmentSuccessful
-          appointmentId={selectedAppointmentId}
-          message={`Appointment ID: ${selectedAppointmentId}`}
-        />
-      )} */}
-      <table className='yourappointmentstable'>
-        <thead>
-          <tr>
-            <th scope='col'>Appointment ID</th>
-            <th scope='col'>Date</th>
-            <th scope='col'>Status</th>
-            <th scope='col'>View</th>
-          </tr>
-        </thead>
-        <tbody>
-          {appointmentData.map((appointment) => (
-            <tr key={appointment.id}>
-              <td data-label='Appointment ID'>{appointment.id}</td>
-              <td data-label='Date'>{appointment.date}</td>
-              <td data-label='Status'>{appointment.status}</td>
-              <td data-label='View'>
-                <button
-                  className='mainbutton1'
-                  onClick={() => handleViewAppointment(appointment.id)}
-                >
-                  View
-                </button>
-              </td>
+      <div className='your-appo'>
+        <h1 className='main-heading'>Your Appointments</h1>
+        <div className='appo-table-wrapper'>
+          <table className='your-appo-table'>
+            <thead>
+            <tr>
+              <th scope='col'>Service Name</th>
+              <th scope='col'>Date</th>
+              <th scope='col'>Duration</th>
+              <th scope='col'>View</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+            </thead>
+            <tbody>
+            {appointmentData.map((appointment) => (
+                <tr key={appointment.id}>
+                  <td data-label='Service Name'>{appointment.serviceName}</td>
+                  <td data-label='Date'>{appointment.date}</td>
+                  <td data-label='Duration'>{appointment.duration}</td>
+                  <td data-label='View'>
+                    <button
+                        className='main-button'
+                        onClick={() => handleViewAppointment(appointment.id)}
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+            ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
   );
-};
+}
 
 export default YourAppointments;

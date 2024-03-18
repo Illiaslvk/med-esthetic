@@ -14,11 +14,12 @@ import java.time.LocalDateTime;
 public class AppointmentDTO {
 
     private Long id;
-    private String serviceName;
     private String userEmail;
     private String date;
     private boolean canceled;
     private String cancellationReason;
+    private String serviceName;
+    private int duration;
 
     public static AppointmentDTO fromEntity(Appointment appointment) {
         AppointmentDTO dto = new AppointmentDTO();
@@ -28,6 +29,7 @@ public class AppointmentDTO {
         dto.date = appointment.getDate().toString();
         dto.canceled = appointment.isCanceled();
         dto.cancellationReason = appointment.getCancellationReason();
+        dto.setDuration(appointment.getAppoService().getDuration());
         return dto;
     }
 }

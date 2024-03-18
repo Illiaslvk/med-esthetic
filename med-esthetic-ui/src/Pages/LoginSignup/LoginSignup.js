@@ -1,205 +1,113 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; 
-
 import "./LoginSignup.css";
-import userIcon from "../../Components/Images/user.png";
-import emailIcon from "../../Components/Images/email.png";
-import passwordIcon from "../../Components/Images/password.png";
-
-import { request, setAuthToken, getAuthToken } from '../api/axios_helper'
-
-const CustomInput = ({ type, placeholder, value, onChange, error, errorMessage, icon, }) => (
-  <div className={`input ${error ? "error" : ""}`}>
-    <img src={icon} alt="" />
-    <input type={type} placeholder={placeholder} value={value} onChange={onChange} />
-    {error && <span className="error-span">{errorMessage}</span>}
-  </div>
-);
+import AuthForm from "../hooks/AuthForm";
+import { request } from "../api/axios_helper";
+import { useAuthFormState } from "../hooks/useAuthFormState"; 
+import {  useAuthFormErrors } from "../hooks/useAuthFormErros";
 
 const LoginSignup = ({ setIsLoggedIn }) => {
+  const [action, setAction] = useState("Sign Up")
+  const [state, handleChange] = useAuthFormState()
+  const [signupErrors, setSignupErrors, resetSignupErrors, loginErrors, setLoginErrors, resetLoginErrors] = useAuthFormErrors();
 
-  const [action, setAction] = useState("Sign Up");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [firstNameError, setFirstNameError] = useState(false);
-  const [lastNameError, setLastNameError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [loginError, setLoginError] = useState(false);
-  const [loginErrorMessage, setLoginErrorMessage] = useState("");
-  const [emailTouched, setEmailTouched] = useState(false);
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const navigate = useNavigate();
-
-  const isEmailValid = () => emailRegex.test(email);
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const jwtToken = Cookies.get("jwtToken");
-  
-    if (jwtToken) {
-      setIsLoggedIn(true);
-    }
-  }, [setIsLoggedIn]);
+    const checkAuthentication = async () => {
+        try {
+            const response = await request("GET", "/auth/check-session");
+            if (response.data.isAuthenticated) {
+                console.log("Session check response:", response.data);
+                setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
+            }
+        } catch (error) {
+            console.error("Session check failed:", error);
+            setIsLoggedIn(false);
+        }
+    };
 
-  
-  const handleValidationErrors = () => {
-    setFirstNameError(!firstName);
-    setLastNameError(!lastName);
-    setEmailError(!isEmailValid());
-    setPasswordError(!password);
+    checkAuthentication();
+}, [setIsLoggedIn]);
+
+
+  const validateSignupForm = () => {
+    const { firstName, lastName, email, password } = state;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let newErrors = {
+      firstNameError: !firstName,
+      lastNameError: !lastName,
+      emailError: !email || !emailRegex.test(email),
+      passwordError: !password,
+    };
+    setSignupErrors(newErrors);
+    return Object.values(newErrors).every((error) => !error);
+  };
+
+  const validateLoginForm = () => {
+    const { email, password } = state;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let newErrors = {
+      emailError: !email || !emailRegex.test(email),
+      passwordError: !password,
+    };
+    setLoginErrors(newErrors);
+    return Object.values(newErrors).every((error) => !error);
   };
 
   const handleSignup = async () => {
-    setEmailTouched(true);
-  
-    if (!firstName || !lastName || !email || !password || !isEmailValid()) {
-      handleValidationErrors();
-      return;
-    }
-  
+    // Using state and errors from the custom hook
+    if (!validateSignupForm()) return
+
     try {
+      // Send a request to sign up
       const response = await request("POST", "/auth/signup", {
-        firstName,
-        lastName,
-        email,
-        password,
-      });
-  
+        firstName: state.firstName,
+        lastName: state.lastName,
+        email: state.email,
+        password: state.password,
+    });
+
       if (response.status === 200) {
-        console.log("Signup successful");
-  
-        // Assuming the server returns the JWT token upon signup, set the JWT token in a cookie with a 30-minute expiration (adjust the time as needed)
-        Cookies.set("jwtToken", response.data.token, { expires: 1 / 48 }); // 30min
-  
-        setAction("Login");
+        console.log("Signup successful")
+        setAction("Login") 
+        resetSignupErrors();  // Reset errors when sign-up is successful
       } else {
         console.error("Signup failed");
       }
     } catch (error) {
       console.error("Error during signup:", error.message);
     }
-  };
-  
+  }
+
   const handleSignin = async () => {
-    setEmailTouched(true);
-  
-    if (!email || !password || !isEmailValid()) {
-      setEmailError(!isEmailValid());
-      setPasswordError(!password);
-      return;
-    }
-  
+    if (!validateLoginForm()) return;
+
     try {
-      const response = await request("POST", "/auth/signin", {
-        email,
-        password,
-      });
-  
-      if (response.status === 200) {
-        console.log("Signin successful");
-        // Store the JWT token in a cookie named "jwtToken"
-        Cookies.set("jwtToken", response.data.token, { expires: 1 / 48 }); // 1/48 of a day is approximately 30 minutes
-        setIsLoggedIn(true);
-        navigate("/");
+        const response = await request("POST", "/auth/signin", {
+            email: state.email,
+            password: state.password,
+        });
+
+        if (response.status === 200) {
+          console.log("Signin successful");
+          
+          // Store the roles returned by the backend in localStorage
+          const roles = response.data.roles;
+          localStorage.setItem("userRoles", JSON.stringify(roles));
+
+          setIsLoggedIn(true);
+          navigate("/");
+          resetLoginErrors();
       } else {
-        console.error("Signin failed");
-        setLoginError(true);
-        setEmailError(false);
-        setPasswordError(true);
-        setEmailTouched(true);
-  
-        if (response.data && response.data.error) {
-          console.error("Error from server:", response.data.error);
-          setLoginErrorMessage(response.data.error);
-        }
+          console.error("Signin failed");
       }
     } catch (error) {
-      console.error("Error during signin:", error.message);
-      setLoginError(true);
+        console.error("Error during signin:", error.message);
     }
-  };
-
-  // const handleSignup = async () => {
-  //   setEmailTouched(true);
-  
-  //   if (!firstName || !lastName || !email || !password || !isEmailValid()) {
-  //     handleValidationErrors();
-  //     return;
-  //   }
-  
-  //   try {
-  //     const response = await axios.post("http://localhost:9090/api/auth/signup", { firstName, lastName, email, password, });
-  
-  //     if (response.status === 200) {
-  //       console.log("Signup successful");
-        
-  //       // Assuming the server returns the JWT token upon signup, set the JWT token in a cookie with a 30-minute expiration (adjust the time as needed)
-  //       Cookies.set("jwtToken", response.data.token, { expires: 1 / 48 }); // 30min
-  
-  //       setAction("Login");
-  //     } else {
-  //       console.error("Signup failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during signup:", error.message);
-  //   }
-  // };
-
-  // const handleSignin = async () => {
-  //   setEmailTouched(true);
-  
-  //   if (!email || !password || !isEmailValid()) {
-  //     setEmailError(!isEmailValid());
-  //     setPasswordError(!password);
-  //     return;
-  //   }
-  
-  //   try {
-  //     const response = await axios.post("http://localhost:9090/api/auth/signin", {email, password,});
-  
-  //     if (response.status === 200) {
-  //       console.log("Signin successful");
-  //       // Store the JWT token in a cookie named "jwtToken"
-  //       Cookies.set("jwtToken", response.data.token, { expires: 1 / 48 }); // 1/48 of a day is approximately 30 minutes
-  //       setIsLoggedIn(true);
-  //       navigate("/");
-  //     } else {
-  //       console.error("Signin failed");
-  //       setLoginError(true);
-  //       setEmailError(false);
-  //       setPasswordError(true);
-  //       setEmailTouched(true);
-  
-  //       if (response.data && response.data.error) {
-  //         console.error("Error from server:", response.data.error);
-  //         setLoginErrorMessage(response.data.error);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during signin:", error.message);
-  //     setLoginError(true);
-  //   }
-  // };
-
-  const handleActionChange = (newAction) => {
-    setFirstNameError(false);
-    setLastNameError(false);
-    setEmailError(false);
-    setPasswordError(false);
-    setLoginError(false);
-    setLoginErrorMessage("");
-    setAction(newAction);
-
-    // Reset passwordError when switching from "Sign Up" to "Login"
-    if (newAction === "Login") {
-      setPasswordError(false);
-    }
-  };
+};
 
   return (
     <div className="container">
@@ -208,97 +116,31 @@ const LoginSignup = ({ setIsLoggedIn }) => {
         <div className="underline"></div>
       </div>
 
-      <div className="inputs">
-        {action === "Login" ? (
-          <></>
-        ) : (
-          <div className="name-inputs">
-            <CustomInput
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                setFirstNameError(false);
-              }}
-              error={firstNameError}
-              errorMessage="First Name cannot be empty"
-              icon={userIcon}
-            />
-            <CustomInput
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => {
-                setLastName(e.target.value);
-                setLastNameError(false);
-              }}
-              error={lastNameError}
-              errorMessage="Last Name cannot be empty"
-              icon={userIcon}
-            />
-          </div>
-        )}
-
-        <CustomInput
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setEmailError(!isEmailValid() && emailTouched);
-          }}
-          error={emailError && emailTouched}
-          errorMessage="Enter a valid email address"
-          icon={emailIcon}
-        />
-        <CustomInput
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setPasswordError(false);
-            setLoginError(false);
-          }}
-          error={passwordError || loginError}
-          errorMessage={
-            loginErrorMessage || "Password cannot be empty or is incorrect"
-          }
-          icon={passwordIcon}
-        />
-      </div>
-
-      {action === "Sign Up" ? (
-        <></>
-      ) : (
-        <div className="forgot-password">
-          Lost Password? <span>Click Here!</span>
-        </div>
-      )}
+      <AuthForm
+        action={action}
+        handleChange={handleChange}
+        state={state}
+        errors={action === "Sign Up" ? signupErrors : loginErrors}
+      />
 
       <div className="submit-container">
-        <div
+        <button
           className={action === "Login" ? "submit gray" : "submit"}
-          onClick={() =>
-            action === "Sign Up"
-              ? handleSignup()
-              : handleActionChange("Sign Up")
+          onClick={
+            action === "Sign Up" ? handleSignup : () => setAction("Sign Up")
           }
         >
           {action === "Sign Up" ? "Confirm" : "Sign Up"}
-        </div>
-        <div
+        </button>
+        <button
           className={action === "Sign Up" ? "submit gray" : "submit"}
-          onClick={() =>
-            action === "Login" ? handleSignin() : handleActionChange("Login")
-          }
+          onClick={action === "Login" ? handleSignin : () => setAction("Login")}
         >
           {action === "Login" ? "Confirm" : "Login"}
-        </div>
+        </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginSignup;
+export default LoginSignup

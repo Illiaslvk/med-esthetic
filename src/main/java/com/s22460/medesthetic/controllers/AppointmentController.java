@@ -52,16 +52,17 @@ public class AppointmentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createAppointment(@RequestBody CreateAppointmentRequestDTO requestDTO) {
+    public ResponseEntity<AppointmentDTO> createAppointment(@RequestBody CreateAppointmentRequestDTO requestDTO) {
         try {
-            appointmentService.createAppointment(requestDTO);
-            return new ResponseEntity<>("Appointment created successfully", HttpStatus.CREATED);
+            Appointment createdAppointment = appointmentService.createAppointment(requestDTO);
+            AppointmentDTO createdAppointmentDTO = AppointmentDTO.fromEntity(createdAppointment);
+            return new ResponseEntity<>(createdAppointmentDTO, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

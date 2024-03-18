@@ -25,4 +25,3 @@ public class BannedUserDTO {
     @NotBlank(message = "Last name cannot be blank")
     private String userLastName;
 }
-

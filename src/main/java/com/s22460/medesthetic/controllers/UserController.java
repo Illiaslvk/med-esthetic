@@ -145,5 +145,32 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // USED IN FRONT
+    @GetMapping("/user/details")
+    public ResponseEntity<UserDTO> getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
+        // Check if the user is authenticated
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Get the email of the authenticated user
+        String userEmail = userDetails.getUsername();
+
+        // Retrieve the user from the database based on the email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Map the user entity to a DTO
+        UserDTO userDTO = Mapper.convertToDTO(user);
+
+        // Additional details based on user status (banned or not)
+        if (user.isBanned()) {
+            userDTO.setAdditionalInfo("This user is currently banned.");
+        } else {
+            userDTO.setAdditionalInfo("This user is not currently in ban.");
+        }
+
+        return ResponseEntity.ok(userDTO);
+    }
 
 }

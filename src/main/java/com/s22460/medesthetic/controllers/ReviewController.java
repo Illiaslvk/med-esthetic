@@ -40,7 +40,6 @@ public class ReviewController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
-        // Assuming you have a method to find the review by ID
         Review existingReview = reviewService.findById(id);
 
         if (existingReview != null) {
@@ -48,8 +47,6 @@ public class ReviewController {
             existingReview.setRating(reviewDTO.getRating());
             existingReview.setComment(reviewDTO.getComment());
             existingReview.setDate(reviewDTO.getDate());
-
-            // You may need to handle the lazy loading of the User entity here
 
             // Save the updated review
             Review updatedReview = reviewService.save(existingReview);

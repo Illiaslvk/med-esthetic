@@ -39,8 +39,8 @@ public class SecurityConfiguration {
         // Disable CSRF and define authorization rules
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/**").permitAll() // удалити потім
+//                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/api/admin").hasAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/emp").hasAuthority(Role.EMPLOYEE.name())
                         .requestMatchers("/api/user").hasAuthority(Role.USER.name())
@@ -49,13 +49,12 @@ public class SecurityConfiguration {
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Set the custom JwtAuthenticationFilter before the standard UsernamePasswordAuthenticationFilter
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
-                    jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
                 );
         return http.build();
 
     }
 
-    //Creates and configures an AuthenticationProvider using DaoAuthenticationProvider
     //perform authentication by interacting with a data access object (DAO) to retrieve user details from a database or another persistent storage.
     @Bean
     public AuthenticationProvider authenticationProvider(){
