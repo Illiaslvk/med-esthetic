@@ -6,6 +6,8 @@ import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.BannedUserRepository;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.UserService;
+import com.s22460.medesthetic.utils.NotFoundException;
+import com.s22460.medesthetic.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -171,6 +174,32 @@ public class UserController {
         }
 
         return ResponseEntity.ok(userDTO);
+    }
+
+    @PutMapping("/admin/{userId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long userId, @RequestBody Role newRole) {
+        try {
+            userService.updateUserRole(userId, newRole);
+            return ResponseEntity.ok("User role updated successfully");
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user role");
+        }
+    }
+
+
+
+    @DeleteMapping("/admin/delete/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user");
+        }
     }
 
 }

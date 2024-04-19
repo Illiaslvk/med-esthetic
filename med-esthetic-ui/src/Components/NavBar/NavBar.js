@@ -18,7 +18,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
             try {
                 const response = await request("GET", "/user/details");
                 if (response.status === 200) {
-                    setUserDetails(response.data); // Assuming response contains user details
+                    setUserDetails(response.data);
                 }
             } catch (error) {
                 console.error("Error fetching user details:", error);
@@ -28,7 +28,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
         if (isLoggedIn) {
             fetchUserDetails();
         } else {
-            setUserDetails(null); // Reset userDetails when logged out
+            setUserDetails(null);
         }
     }, [isLoggedIn]);
 
@@ -94,7 +94,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
                 </li>
                 {isAdmin && (
                     <li>
-                        <Link to="/admin">Admin Panel</Link>{" "}{menu === "admin" ? <hr /> : <></>}
+                        <Link to="/admin/admintab">Admin Panel</Link>{" "}{menu === "admin" ? <hr /> : <></>}
                     </li>
                 )}
             </ul>
@@ -113,7 +113,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
                                 <Link className="options" to="/user/changepassword">Settings</Link>
                                 <Link className="options" to="/user/appointments">Appointments</Link>
                                 {isAdmin && (
-                                    <Link className="options" to="/admin"> Admin </Link>
+                                    <Link className="options" to="/admin/admintab"> Admin </Link>
                                 )}
                                 <Link className="options" onClick={handleLogout} >Log out</Link>
                             </div>

@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/messages")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class MessagesController {
 
     @GetMapping

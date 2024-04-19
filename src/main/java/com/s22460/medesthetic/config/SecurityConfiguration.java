@@ -17,10 +17,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
@@ -39,11 +35,12 @@ public class SecurityConfiguration {
         // Disable CSRF and define authorization rules
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-//                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/api/admin").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/emp").hasAuthority(Role.EMPLOYEE.name())
-                        .requestMatchers("/api/user").hasAuthority(Role.USER.name())
+                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/emp/**").hasAuthority(Role.EMPLOYEE.name())
+                        .requestMatchers("/api/users/**").hasAuthority(Role.USER.name())
+//                        .requestMatchers("/api/user/**").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated())
 // Configure session management to be stateless (using JWT) || stateless - application should not store any session-related information on the server side
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -73,7 +73,7 @@ public class JWTServiceImpl implements JWTService {
         //will return all the claims from our token
         return Jwts.parserBuilder().setSigningKey(getSigninKey()).build().parseClaimsJws(token).getBody();
     }
-
+    // checks whether a token is currently valid
     public boolean isTokenValid(String token, UserDetails userDetails){
         final String username = extractUserName(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
@@ -104,8 +104,7 @@ public class JWTServiceImpl implements JWTService {
     }
     public boolean shouldTokenBeRefreshed(String token) {
         Date expirationDate = extractAllClaims(token).getExpiration();
-        // Define how close to expiration a token needs to be to trigger a refresh
-        long refreshThreshold = 1 * 60 * 1000; // 2 minutes
+        long refreshThreshold = 30 * 1000; // 30sec or  put 1 min 60*1000
         return new Date(System.currentTimeMillis() + refreshThreshold).after(expirationDate);
     }
 

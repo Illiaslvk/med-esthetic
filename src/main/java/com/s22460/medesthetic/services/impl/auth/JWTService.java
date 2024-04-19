@@ -1,6 +1,7 @@
 package com.s22460.medesthetic.services.impl.auth;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,4 +16,5 @@ public interface JWTService {
 
     boolean shouldTokenBeRefreshed(String token);
     long getAccessTokenExpiration();
+
 }

@@ -3,6 +3,7 @@ package com.s22460.medesthetic.services;
 import com.s22460.medesthetic.dtos.UserDTO;
 import com.s22460.medesthetic.entities.Appointment;
 import com.s22460.medesthetic.entities.User;
+import com.s22460.medesthetic.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -35,4 +36,6 @@ public interface UserService {
     void banUserByEmail(String adminEmail, String userToBanEmail, String banReason);
 
     void unbanUserByEmail(String adminEmail, String userToUnbanEmail);
+
+    void updateUserRole(Long userId, Role newRole);
 }

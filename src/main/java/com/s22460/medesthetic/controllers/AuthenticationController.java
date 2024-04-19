@@ -51,7 +51,7 @@ public class AuthenticationController {
 
         // Set the JWT token in a cookie
         Cookie authTokenCookie = new Cookie("auth_token", jwtResponse.getToken());
-//        authTokenCookie.setMaxAge(15 * 60); // 15 minutes
+        // authTokenCookie.setMaxAge(15 * 60); // 15 minutes
         authTokenCookie.setMaxAge(2*60); // 2 minute
         authTokenCookie.setHttpOnly(true);
         authTokenCookie.setSecure(true);
@@ -83,7 +83,6 @@ public class AuthenticationController {
     @CrossOrigin
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletResponse response) {
-        System.out.println("Refresh token endpoint hit");
         try {
             String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
@@ -91,7 +90,8 @@ public class AuthenticationController {
             // Check if the refresh token is still valid
             if (jwtService.isRefreshTokenValid(refreshTokenRequest.getToken(), userDetails)) {
                 // Generate a new access token
-                String newToken = jwtService.generateTokenBasedOnRole(userDetails);
+                String newToken = jwtService.generateToken(userDetails);
+//                String newToken = jwtService.generateTokenBasedOnRole(userDetails);
 
                 // Set the new token in a cookie
                 Cookie newTokenCookie = new Cookie("auth_token", newToken);
@@ -101,6 +101,7 @@ public class AuthenticationController {
                 newTokenCookie.setPath("/");
                 response.addCookie(newTokenCookie);
 
+                // Return the new token along with the refresh token
                 return ResponseEntity.ok(new JwtAuthenticationResponse(newToken, refreshTokenRequest.getToken()));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
@@ -111,6 +112,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid request");
         }
     }
+
 
     @CrossOrigin
     @GetMapping("/check-session")

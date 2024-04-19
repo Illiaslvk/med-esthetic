@@ -7,6 +7,8 @@ import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.BannedUserRepository;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.UserService;
+import com.s22460.medesthetic.utils.NotFoundException;
+import com.s22460.medesthetic.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -139,5 +141,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findByFirstName(firstName)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found by first name: " + firstName));
     }
+
+    public void updateUserRole(Long userId, Role newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        user.setRole(newRole);
+        userRepository.save(user);
+    }
+
 
 }

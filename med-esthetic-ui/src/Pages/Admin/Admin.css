@@ -1,24 +1,52 @@
-.admin-page {
-  padding: 20px;
+/*.admin-page {*/
+/*  padding: 20px;*/
+/*}*/
+
+/*.admin-page h1 {*/
+/*  color: #333;*/
+/*  text-align: center;*/
+/*}*/
+
+/*.users-list {*/
+/*  margin-top: 20px;*/
+/*}*/
+
+/*.users-list ul {*/
+/*  list-style-type: none;*/
+/*  padding: 0;*/
+/*}*/
+
+/*.users-list li {*/
+/*  background-color: #f2f2f2;*/
+/*  padding: 10px;*/
+/*  margin-bottom: 10px;*/
+/*  border-radius: 5px;*/
+/*}*/
+
+.adminprofile{
+  display: flex;
+  flex-direction: column;
 }
 
-.admin-page h1 {
-  color: #333;
-  text-align: center;
+.adminprofilein{
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 10vh;
+  gap: 20px;
 }
 
-.users-list {
-  margin-top: 20px;
-}
-
-.users-list ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.users-list li {
-  background-color: #f2f2f2;
-  padding: 10px;
-  margin-bottom: 10px;
+.adminprofile .adminprofilein .left{
+  width: 20%;
+  border: 1px solid rgb(207, 207, 207);
   border-radius: 5px;
+  min-height: 50vh;
 }
+
+.adminprofile .adminprofilein .right{
+  width: 60%;
+  border: 1px solid rgb(207, 207, 207);
+  border-radius: 5px;
+  min-height: 50vh;
+}
+

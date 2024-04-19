@@ -19,7 +19,7 @@ function App() {
     <div className="App">
       <ErrorBoundary>
         <BrowserRouter>
-          <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+          <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}  />
 
           <Routes>
             <Route path="/" element={<Home />} />
@@ -29,7 +29,7 @@ function App() {
 
             {/* My Profile */}
             <Route path="/user/:activepage" element={<UserProfile />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/:activepage" element={<Admin />} />
 
             <Route
               path="/login"
