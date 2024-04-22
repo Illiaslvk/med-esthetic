@@ -84,7 +84,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setCanceled(true);
         appointment.setCancellationReason(cancellationReason);
 
-        // Save the updated appointment
         appointmentRepository.save(appointment);
 
         return appointment;

@@ -93,7 +93,6 @@ const LoginSignup = ({ setIsLoggedIn }) => {
 
         if (response.status === 200) {
           console.log("Signin successful");
-          
           // Store the roles returned by the backend in localStorage
           const roles = response.data.roles;
           localStorage.setItem("userRoles", JSON.stringify(roles));

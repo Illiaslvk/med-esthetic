@@ -9,6 +9,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -35,11 +38,10 @@ public class SecurityConfiguration {
         // Disable CSRF and define authorization rules
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/emp/**").hasAuthority(Role.EMPLOYEE.name())
-                        .requestMatchers("/api/users/**").hasAuthority(Role.USER.name())
+                        .requestMatchers("/api/**").permitAll()
+//                        .requestMatchers("/api/auth/**").permitAll()
+//                        .requestMatchers("/api/admin/**").hasAuthority(Role.ADMIN.name())
+//                        .requestMatchers("/api/emp/**").hasAuthority(Role.EMPLOYEE.name())
 //                        .requestMatchers("/api/user/**").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated())
 // Configure session management to be stateless (using JWT) || stateless - application should not store any session-related information on the server side

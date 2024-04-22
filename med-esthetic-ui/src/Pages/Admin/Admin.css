@@ -1,28 +1,3 @@
-/*.admin-page {*/
-/*  padding: 20px;*/
-/*}*/
-
-/*.admin-page h1 {*/
-/*  color: #333;*/
-/*  text-align: center;*/
-/*}*/
-
-/*.users-list {*/
-/*  margin-top: 20px;*/
-/*}*/
-
-/*.users-list ul {*/
-/*  list-style-type: none;*/
-/*  padding: 0;*/
-/*}*/
-
-/*.users-list li {*/
-/*  background-color: #f2f2f2;*/
-/*  padding: 10px;*/
-/*  margin-bottom: 10px;*/
-/*  border-radius: 5px;*/
-/*}*/
-
 .adminprofile{
   display: flex;
   flex-direction: column;

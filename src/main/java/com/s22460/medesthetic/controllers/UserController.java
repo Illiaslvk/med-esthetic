@@ -1,6 +1,7 @@
 package com.s22460.medesthetic.controllers;
 
 import com.s22460.medesthetic.dtos.Mapper;
+import com.s22460.medesthetic.dtos.UpdateRoleRequest;
 import com.s22460.medesthetic.dtos.UserDTO;
 import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.BannedUserRepository;
@@ -8,6 +9,7 @@ import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.UserService;
 import com.s22460.medesthetic.utils.NotFoundException;
 import com.s22460.medesthetic.utils.Role;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +37,14 @@ public class UserController {
 
     //Admin
     @GetMapping("/admin/users")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/admin/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<UserDTO> getUserProfile(@PathVariable Long userId) {
 
         User user = userService.getUserById(userId);
@@ -58,7 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/banUser")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> banUser(@RequestBody Map<String, String> request) {
 
         String adminEmail = request.get("adminEmail");
@@ -78,7 +80,7 @@ public class UserController {
 
     //                  MAKE UNBAN
     @PostMapping("/admin/unbanUser")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> unbanUser(@RequestBody Map<String, String> request) {
         String adminEmail = request.get("adminEmail");
         String userToUnbanEmail = request.get("userToUnbanEmail");
@@ -93,6 +95,31 @@ public class UserController {
         }
     }
 
+    @PutMapping("/admin/{userId}/role")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long userId, @RequestBody UpdateRoleRequest updateRoleRequest) {
+        try {
+            userService.updateUserRole(userId, updateRoleRequest.getRole());
+            return ResponseEntity.ok("User role updated successfully");
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user role");
+        }
+    }
+
+
+
+    @DeleteMapping("/admin/delete/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user");
+        }
+    }
 
     //Employee
 
@@ -174,32 +201,6 @@ public class UserController {
         }
 
         return ResponseEntity.ok(userDTO);
-    }
-
-    @PutMapping("/admin/{userId}/role")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateUserRole(@PathVariable Long userId, @RequestBody Role newRole) {
-        try {
-            userService.updateUserRole(userId, newRole);
-            return ResponseEntity.ok("User role updated successfully");
-        } catch (NotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user role");
-        }
-    }
-
-
-
-    @DeleteMapping("/admin/delete/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        try {
-            userService.deleteUser(userId);
-            return ResponseEntity.ok("User deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user");
-        }
     }
 
 }

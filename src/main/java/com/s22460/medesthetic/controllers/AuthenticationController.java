@@ -51,7 +51,6 @@ public class AuthenticationController {
 
         // Set the JWT token in a cookie
         Cookie authTokenCookie = new Cookie("auth_token", jwtResponse.getToken());
-        // authTokenCookie.setMaxAge(15 * 60); // 15 minutes
         authTokenCookie.setMaxAge(2*60); // 2 minute
         authTokenCookie.setHttpOnly(true);
         authTokenCookie.setSecure(true);
