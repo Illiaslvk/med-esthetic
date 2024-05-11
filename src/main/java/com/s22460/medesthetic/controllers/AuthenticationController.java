@@ -51,7 +51,7 @@ public class AuthenticationController {
 
         // Set the JWT token in a cookie
         Cookie authTokenCookie = new Cookie("auth_token", jwtResponse.getToken());
-        authTokenCookie.setMaxAge(2*60); // 2 minute
+        //authTokenCookie.setMaxAge(2*60); // 2 minute
         authTokenCookie.setHttpOnly(true);
         authTokenCookie.setSecure(true);
         authTokenCookie.setPath("/");
@@ -63,7 +63,7 @@ public class AuthenticationController {
         int refreshTokenMaxAge = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))
                 ? 12 * 60 * 60  // 12 hours for ADMIN
                 : 2 * 60 * 60;  // 2 hours for others
-        refreshTokenCookie.setMaxAge(refreshTokenMaxAge);
+        //refreshTokenCookie.setMaxAge(refreshTokenMaxAge);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
@@ -89,12 +89,13 @@ public class AuthenticationController {
             // Check if the refresh token is still valid
             if (jwtService.isRefreshTokenValid(refreshTokenRequest.getToken(), userDetails)) {
                 // Generate a new access token
+                System.out.println("Refresh token is valid for user: " + userEmail);
                 String newToken = jwtService.generateToken(userDetails);
 //                String newToken = jwtService.generateTokenBasedOnRole(userDetails);
 
                 // Set the new token in a cookie
                 Cookie newTokenCookie = new Cookie("auth_token", newToken);
-                newTokenCookie.setMaxAge((int) (jwtService.getAccessTokenExpiration() / 1000)); // Convert milliseconds to seconds
+                //newTokenCookie.setMaxAge((int) (jwtService.getAccessTokenExpiration() / 1000)); // Convert milliseconds to seconds
                 newTokenCookie.setHttpOnly(true);
                 newTokenCookie.setSecure(true);
                 newTokenCookie.setPath("/");
@@ -103,6 +104,7 @@ public class AuthenticationController {
                 // Return the new token along with the refresh token
                 return ResponseEntity.ok(new JwtAuthenticationResponse(newToken, refreshTokenRequest.getToken()));
             } else {
+                System.out.println("Refresh token is invalid or expired for user: " + userEmail);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
             }
         } catch (UsernameNotFoundException e) {

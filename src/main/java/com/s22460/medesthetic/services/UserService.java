@@ -1,19 +1,14 @@
 package com.s22460.medesthetic.services;
 
+import com.s22460.medesthetic.dtos.AvailableSlotsDTO;
 import com.s22460.medesthetic.dtos.UserDTO;
-import com.s22460.medesthetic.entities.Appointment;
+import com.s22460.medesthetic.entities.AvailableSlots;
 import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.utils.Role;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 
 public interface UserService {
@@ -38,4 +33,16 @@ public interface UserService {
     void unbanUserByEmail(String adminEmail, String userToUnbanEmail);
 
     void updateUserRole(Long userId, Role newRole);
+
+    // related to appo booking
+    List<User> getAllEmployees();
+
+    AvailableSlotsDTO addAvailabilitySlot(Long employeeId, AvailableSlotsDTO availableSlotsDTO);
+    AvailableSlotsDTO updateAvailabilitySlot(Long employeeId, Long availabilitySlotId, AvailableSlotsDTO availableSlotsDTO);
+    void deleteAvailabilitySlot(Long employeeId, Long availabilitySlotId);
+//    List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId);
+    List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId, LocalDate date);
+
+    void clearAvailabilitySlots(Long userId);
+
 }

@@ -7,9 +7,11 @@ import com.s22460.medesthetic.entities.Appointment;
 import com.s22460.medesthetic.services.AppoServiceService;
 import com.s22460.medesthetic.services.AppointmentService;
 import com.s22460.medesthetic.utils.NotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,13 +54,15 @@ public class AppointmentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<AppointmentDTO> createAppointment(@RequestBody CreateAppointmentRequestDTO requestDTO) {
+    public ResponseEntity<AppointmentDTO> createAppointment(@RequestBody @Valid CreateAppointmentRequestDTO createAppointmentDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         try {
-            Appointment createdAppointment = appointmentService.createAppointment(requestDTO);
-            AppointmentDTO createdAppointmentDTO = AppointmentDTO.fromEntity(createdAppointment);
+            Appointment appointment = appointmentService.createAppointment(createAppointmentDTO);
+            AppointmentDTO createdAppointmentDTO = AppointmentDTO.fromEntity(appointment);
             return new ResponseEntity<>(createdAppointmentDTO, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -79,8 +83,5 @@ public class AppointmentController {
             return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
 
 }

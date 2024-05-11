@@ -5,6 +5,7 @@
   background-color: papayawhip;
   padding: 16px;
   position: relative;
+  z-index: 2
 }
 
 .nav-logo {

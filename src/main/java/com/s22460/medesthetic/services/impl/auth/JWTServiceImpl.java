@@ -1,6 +1,7 @@
 package com.s22460.medesthetic.services.impl.auth;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -22,7 +23,7 @@ public class JWTServiceImpl implements JWTService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    private static final long ACCESS_TOKEN_EXPIRATION = 2*60 * 1000; // 2 minutes
+    private static final long ACCESS_TOKEN_EXPIRATION = 5 * 60 * 1000; // 5 minutes
     private static final long REFRESH_TOKEN_EXPIRATION = 2 * 60 * 60 * 1000; // 2 hours
     private static final long ADMIN_REFRESH_TOKEN_EXPIRATION = 12 * 60 * 60 * 1000; // 12 hours for admin
 
@@ -79,7 +80,14 @@ public class JWTServiceImpl implements JWTService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenAboutToExpire(String token) {
+        Date expirationDate = extractAllClaims(token).getExpiration();
+        long thresholdMillis = 60 * 1000; // 60sec
+        Date currentDateTime = new Date();
+        // Check if the token is already expired or about to expire within the threshold
+        return expirationDate.before(currentDateTime) || expirationDate.getTime() - currentDateTime.getTime() < thresholdMillis;
+    }
+    public boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
@@ -101,15 +109,6 @@ public class JWTServiceImpl implements JWTService {
         } catch (Exception e) {
             return false; // invalid
         }
-    }
-    public boolean shouldTokenBeRefreshed(String token) {
-        Date expirationDate = extractAllClaims(token).getExpiration();
-        long refreshThreshold = 30 * 1000; // 30sec or  put 1 min 60*1000
-        return new Date(System.currentTimeMillis() + refreshThreshold).after(expirationDate);
-    }
-
-    public long getAccessTokenExpiration() {
-        return ACCESS_TOKEN_EXPIRATION;
     }
 
 }

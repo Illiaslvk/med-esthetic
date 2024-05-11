@@ -66,7 +66,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByEmail(userEmail).orElseThrow();
         // Check if the refresh token is valid and generate a new JWT
         if(jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
+            System.out.println("Refreshing JWT token for user: " + userEmail);
             String jwt = jwtService.generateToken(user);
+            System.out.println("New JWT token generated: " + jwt);
             // Create and return JwtAuthenticationResponse
             JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
             jwtAuthenticationResponse.setToken(jwt);

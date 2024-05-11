@@ -10,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
 @SpringBootApplication
 public class MedEstheticApplication implements CommandLineRunner {
 
@@ -24,8 +23,7 @@ public class MedEstheticApplication implements CommandLineRunner {
     //logic to create admin user in run method
     // can accept a variable number of String arguments
     public void run(String... args){
-        //todo: Fix - if uncomment this code it will crash
-        /*User adminAccount = userRepository.findByRole(Role.ADMIN);
+        User adminAccount = userRepository.findByRole(Role.ADMIN);
         if(null == adminAccount){
             User user = new User();
 
@@ -36,7 +34,7 @@ public class MedEstheticApplication implements CommandLineRunner {
             user.setPassword(new BCryptPasswordEncoder().encode("admin"));
 
             userRepository.save(user);
-        }*/
+        }
     }
 
 }

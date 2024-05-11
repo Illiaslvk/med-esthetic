@@ -10,14 +10,13 @@ import LoginSignup from "./Pages/LoginSignup/LoginSignup"
 import Footer from "./Components/Footer/Footer"
 import UserProfile from "./Pages/User/UserProfile"
 import Admin from "./Pages/Admin/Admin"
-import ErrorBoundary from "./Components/ErrorBoundary"
+import Calendar from "./Pages/Calendar/Calendar"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   return (
     <div className="App">
-      <ErrorBoundary>
         <BrowserRouter>
           <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}  />
 
@@ -30,7 +29,7 @@ function App() {
             {/* My Profile */}
             <Route path="/user/:activepage" element={<UserProfile />} />
             <Route path="/admin/:activepage" element={<Admin />} />
-
+            <Route path="/calendar" element={<Calendar />} />
             <Route
               path="/login"
               element={<LoginSignup setIsLoggedIn={setIsLoggedIn} />}
@@ -38,7 +37,6 @@ function App() {
           </Routes>
           <Footer />
         </BrowserRouter>
-      </ErrorBoundary>
     </div>
   )
 }

@@ -112,6 +112,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
                                 <Link className="options" to="/user/accountsettings">My Profile</Link>
                                 <Link className="options" to="/user/changepassword">Settings</Link>
                                 <Link className="options" to="/user/appointments">Appointments</Link>
+                                <Link className="options" to="/calendar">Calendar</Link>
                                 {isAdmin && (
                                     <Link className="options" to="/admin/admintab"> Admin </Link>
                                 )}

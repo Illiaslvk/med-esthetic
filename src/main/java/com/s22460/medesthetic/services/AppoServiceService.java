@@ -12,4 +12,8 @@ public interface AppoServiceService {
 
     AppoService addService(AppoService appoService);
 
+    //for appos booking
+    List<AppoService> getServicesForUser(Long userId);
+
+    void assignServiceToUser(Long userId, Long serviceId);
 }

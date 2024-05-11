@@ -3,7 +3,7 @@ import './Admin.css';
 import AdminSidebar from "../../Components/AdminProfile/AdminSidebar";
 import { useParams } from "react-router-dom";
 import UsersList from "../../Components/AdminProfile/UsersList";
-import { fetchAllUsers, searchUsersByName } from '../../Components/services/userService';
+import { fetchAllUsers } from '../../Components/services/userService';
 import AdminTab from "../../Components/AdminProfile/AdminTab";
 
 const Admin = () => {
@@ -26,25 +26,29 @@ const Admin = () => {
         }
     };
 
-    const handleSearch = async () => {
+    const handleSearch = () => {
         if (searchQuery.trim() === '') {
             setFilteredUsers(users); // Reset filteredUsers to all users if search query is empty
             return;
         }
 
-        try {
-            const data = await searchUsersByName(searchQuery);
-            setFilteredUsers(data); // Update filteredUsers with search results
-        } catch (error) {
-            console.error('Failed to search users:', error);
-        }
-
+        const filtered = users.filter(user =>
+            user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFilteredUsers(filtered); // Update filteredUsers with search results
         // console.log(filteredUsers);
     };
 
+
     const handleChange = (event) => {
         setSearchQuery(event.target.value);
+        // If  query cleared refresh the user list
+        if (event.target.value.trim() === '') {
+            setFilteredUsers(users);
+        }
     };
+
 
     return (
         <div className="adminprofile">

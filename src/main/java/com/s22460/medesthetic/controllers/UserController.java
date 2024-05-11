@@ -1,28 +1,31 @@
 package com.s22460.medesthetic.controllers;
 
-import com.s22460.medesthetic.dtos.Mapper;
-import com.s22460.medesthetic.dtos.UpdateRoleRequest;
-import com.s22460.medesthetic.dtos.UserDTO;
+import com.s22460.medesthetic.dtos.*;
+import com.s22460.medesthetic.entities.AppoService;
 import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.BannedUserRepository;
 import com.s22460.medesthetic.repository.UserRepository;
+import com.s22460.medesthetic.services.AppoServiceService;
 import com.s22460.medesthetic.services.UserService;
 import com.s22460.medesthetic.utils.NotFoundException;
 import com.s22460.medesthetic.utils.Role;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +36,7 @@ public class UserController {
     private final UserService userService;
     private final BannedUserRepository bannedUserRepository;
     private final UserRepository userRepository;
-
+    private final AppoServiceService appoServiceService;
 
     //Admin
     @GetMapping("/admin/users")
@@ -55,18 +58,15 @@ public class UserController {
         } else {
             userDTO.setAdditionalInfo("This user is not currently in ban.");
         }
-
         return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping("/admin/banUser")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> banUser(@RequestBody Map<String, String> request) {
-
         String adminEmail = request.get("adminEmail");
         String userToBanEmail = request.get("userToBanEmail");
         String banReason = request.get("banReason");
-
         // Handle banning a user
         try {
             userService.banUserByEmail(adminEmail, userToBanEmail, banReason);
@@ -100,6 +100,11 @@ public class UserController {
     public ResponseEntity<?> updateUserRole(@PathVariable Long userId, @RequestBody UpdateRoleRequest updateRoleRequest) {
         try {
             userService.updateUserRole(userId, updateRoleRequest.getRole());
+            // If new role is EMPLOYEE assign work hours from 8 am to 5 pm on weekdays
+            if (updateRoleRequest.getRole() == Role.EMPLOYEE) {
+                assignWorkHours(userId);
+            }
+
             return ResponseEntity.ok("User role updated successfully");
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -108,7 +113,39 @@ public class UserController {
         }
     }
 
+    private void assignWorkHours(Long userId) {
+        User user = userService.getUserById(userId);
+        if (user != null) {
+            userService.clearAvailabilitySlots(userId);
+            // Assign work hours from 8 am to 5 pm on weekdays
+            List<AvailableSlotsDTO> workHours = generateWorkHours();
+            for (AvailableSlotsDTO slot : workHours) {
+                userService.addAvailabilitySlot(userId, slot);
+            }
+        }
+    }
 
+    private List<AvailableSlotsDTO> generateWorkHours() {
+        List<AvailableSlotsDTO> workHours = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        // Iterate through each day
+        LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        LocalDate endOfWeek = nextMonday.plusDays(5);
+        for (LocalDate date = nextMonday; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
+            // Exclude Saturday and Sunday
+            if (date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY) {
+                for (int hour = 8; hour < 17; hour++) {
+                    AvailableSlotsDTO workSlot = new AvailableSlotsDTO();
+                    workSlot.setDate(date);
+                    workSlot.setStartTime(LocalTime.of(hour, 0)); // Start of the hour
+                    workSlot.setEndTime(LocalTime.of(hour + 1, 0)); // Start of the next hour
+                    workHours.add(workSlot);
+                }
+            }
+        }
+
+        return workHours;
+    }
 
     @DeleteMapping("/admin/delete/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -122,7 +159,30 @@ public class UserController {
     }
 
     //Employee
+    @GetMapping("/employees")
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        List<User> employees = userService.getAllEmployees();
+        List<EmployeeDTO> employeeDTOs = new ArrayList<>();
+        for (User employee : employees) {
+            employeeDTOs.add(new EmployeeDTO(employee.getId(),employee.getFirstName(), employee.getLastName()));
+        }
+        return ResponseEntity.ok(employeeDTOs);
+    }
 
+    @GetMapping("/employees/{employeeId}/services")
+    public ResponseEntity<List<AppoServiceDTO>> getEmployeeServices(@PathVariable Long employeeId) {
+        try {
+            List<AppoService> employeeServices = appoServiceService.getServicesForUser(employeeId);
+            List<AppoServiceDTO> employeeServiceDTOs = employeeServices.stream()
+                    .map(AppoServiceDTO::fromEntity)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(employeeServiceDTOs);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     //User
     @GetMapping("/getUserById/{id}")
@@ -178,29 +238,48 @@ public class UserController {
     // USED IN FRONT
     @GetMapping("/user/details")
     public ResponseEntity<UserDTO> getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
-        // Check if the user is authenticated
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
-        // Get the email of the authenticated user
         String userEmail = userDetails.getUsername();
-
-        // Retrieve the user from the database based on the email
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Map the user entity to a DTO
         UserDTO userDTO = Mapper.convertToDTO(user);
-
-        // Additional details based on user status (banned or not)
         if (user.isBanned()) {
             userDTO.setAdditionalInfo("This user is currently banned.");
         } else {
             userDTO.setAdditionalInfo("This user is not currently in ban.");
         }
-
         return ResponseEntity.ok(userDTO);
+    }
+
+    //For EMP availability
+    @PostMapping("/emp/{employeeId}/availability")
+    public ResponseEntity<AvailableSlotsDTO> addAvailabilitySlot(
+            @PathVariable Long employeeId,
+            @RequestBody AvailableSlotsDTO availableSlotsDTO
+    ) {
+        AvailableSlotsDTO addedSlot = userService.addAvailabilitySlot(employeeId, availableSlotsDTO);
+        return ResponseEntity.ok(addedSlot);
+    }
+
+    @PutMapping("/emp/{employeeId}/availability/{availabilitySlotId}")
+    public ResponseEntity<AvailableSlotsDTO> updateAvailabilitySlot(
+            @PathVariable Long employeeId,
+            @PathVariable Long availabilitySlotId,
+            @RequestBody AvailableSlotsDTO availableSlotsDTO
+    ) {
+        AvailableSlotsDTO updatedSlot = userService.updateAvailabilitySlot(employeeId, availabilitySlotId, availableSlotsDTO);
+        return ResponseEntity.ok(updatedSlot);
+    }
+
+    @DeleteMapping("/emp/{employeeId}/availability/{availabilitySlotId}")
+    public ResponseEntity<Void> deleteAvailabilitySlot(
+            @PathVariable Long employeeId,
+            @PathVariable Long availabilitySlotId
+    ) {
+        userService.deleteAvailabilitySlot(employeeId, availabilitySlotId);
+        return ResponseEntity.noContent().build();
     }
 
 }

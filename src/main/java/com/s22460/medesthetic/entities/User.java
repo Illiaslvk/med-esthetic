@@ -55,6 +55,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
+    //for EMP
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AvailableSlots> availableSlots;
+
     // Blocking users
     private boolean banned;
     public void banUser() {this.banned = true;}

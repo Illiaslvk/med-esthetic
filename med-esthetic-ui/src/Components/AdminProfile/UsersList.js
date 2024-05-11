@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Popup from './Popup';
 import "./AdminProfile.css";
 import { request } from "../../Pages/api/axios_helper";
+import {toast, ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
     const [selectedUser, setSelectedUser] = useState(null);
@@ -24,6 +26,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
             const response = await request('PUT', `/admin/${userId}/role`, { role: newRole });
             if (response.status === 200) {
                 console.log(`User with ID ${userId} role updated successfully`);
+                toast.success("Role changed successfully!");
                 fetchUserList(); // Refresh the user list after updating the role
                 handleClosePopup();
             } else {
@@ -78,7 +81,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                 <table className='user-table'>
                     <thead>
                     <tr>
-                        <th>First Name</th>
+                        <th>Full Name</th>
                         <th>Email</th>
                         <th>Action</th>
                     </tr>
@@ -86,7 +89,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                     <tbody>
                     {userList.map(user => (
                         <tr key={user.id}>
-                            <td>{user.firstName }</td>
+                            <td>{user.firstName} {user.lastName}</td>
                             <td>{user.email}</td>
                             <td>
                                 <button className='details-button' onClick={() => handleDetailsClick(user)}>Details</button>
@@ -104,6 +107,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                     onUpdateRole={(userId, newRole) => handleUpdateRole(userId, newRole)}
                 />
             )}
+            <ToastContainer position="bottom-right" autoClose={3000} />
         </div>
     );
 };

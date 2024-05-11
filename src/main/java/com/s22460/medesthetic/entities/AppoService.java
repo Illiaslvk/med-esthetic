@@ -31,4 +31,9 @@ public class AppoService {
 
     @OneToMany(mappedBy = "appoService", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;
+
+    //EAGER - loads associated entities immediately along with the owning entity
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

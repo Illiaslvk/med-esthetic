@@ -1,11 +1,11 @@
 package com.s22460.medesthetic.entities;
 
-import com.s22460.medesthetic.utils.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Data
@@ -23,23 +23,21 @@ public class Appointment {
     @Future(message = "Date should be in the future")
     private LocalDate date;
 
+    private String time;
+
     private boolean canceled;
 
     @Column(name = "cancellation_reason", length = 50)
     private String cancellationReason;
+
+    private String fullName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = true) // Nullable because it's optional
+    @JoinColumn(name = "service_id", nullable = true)
     private AppoService appoService;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "employee_role", nullable = false)
-//    private Role employeeRole;
-
-    // Getters and setters
 
 }

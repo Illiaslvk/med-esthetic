@@ -17,4 +17,7 @@ public interface AppointmentService {
     Appointment createAppointment(CreateAppointmentRequestDTO requestDTO);
     Appointment cancelAppointment(Long appointmentId, String cancellationReason);
 
+    //for appos booking
+
+
 }

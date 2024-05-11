@@ -3,6 +3,9 @@ import axios from "axios"
 axios.defaults.baseURL = "http://localhost:8080/api"
 axios.defaults.withCredentials = true
 
+let retryCount = 0;
+const MAX_RETRIES = 5;
+
 // Axios Response Interceptor
 axios.interceptors.response.use(
   (response) => {
@@ -11,8 +14,15 @@ axios.interceptors.response.use(
   (error) => {
     console.log("Interceptor caught an error:", error.response.status)
     if (error.response && error.response.status === 401) {
+
+      if(retryCount >= MAX_RETRIES){
+        console.log("Max retry limit reached. Stop further retries")
+        return Promise.reject(error);
+      }
       // Attempt to refresh the token
       console.log("Attempting to refresh token...")
+
+      retryCount++;
 
       return request("POST", "/auth/refresh", {})
         .then((res) => {

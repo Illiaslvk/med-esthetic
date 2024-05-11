@@ -50,24 +50,22 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment createAppointment(CreateAppointmentRequestDTO requestDTO) {
         // Validate the request
-        if (requestDTO == null || requestDTO.getAppoServiceId() == null || requestDTO.getUserEmail() == null || requestDTO.getDate() == null) {
+        if (requestDTO == null || requestDTO.getEmployeeId() == null || requestDTO.getUserEmail() == null || requestDTO.getDate() == null || requestDTO.getTime() == null || requestDTO.getServiceId() == null) {
             throw new IllegalArgumentException("Invalid appointment request. Please provide all required fields.");
         }
-
         // Fetch user and appoService entities from the database
         User user = userRepository.findByEmail(requestDTO.getUserEmail())
                 .orElseThrow(() -> new NotFoundException("User not found with email: " + requestDTO.getUserEmail()));
-
-        AppoService appoService = appoServiceRepository.findById(requestDTO.getAppoServiceId())
-                .orElseThrow(() -> new NotFoundException("AppoService not found with ID: " + requestDTO.getAppoServiceId()));
-
+        AppoService appoService = appoServiceRepository.findById(requestDTO.getServiceId())
+                .orElseThrow(() -> new NotFoundException("AppoService not found with ID: " + requestDTO.getServiceId()));
         // Create the Appointment entity
         Appointment appointment = new Appointment();
         appointment.setUser(user);
         appointment.setAppoService(appoService);
         appointment.setDate(requestDTO.getDate());
+        appointment.setTime(requestDTO.getTime());
         appointment.setCanceled(false);
-
+        appointment.setFullName(requestDTO.getFullName());
         // Save the appointment to the database
         return appointmentRepository.save(appointment);
     }
