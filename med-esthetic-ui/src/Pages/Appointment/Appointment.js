@@ -6,8 +6,6 @@ import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Appointment.css";
 
-// todo:: fix time for appos(має показувати лише доступні а не на кожен день)
-
 const Appointment = () => {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState("");
@@ -115,7 +113,7 @@ const Appointment = () => {
       const response = await request("POST", "/appointments/create", formData);
       if (response.status === 201) {
         console.log("Appointment booked successfully!");
-        toast.success("Appointment booked successfully!"); // Show success
+        toast.success("Appointment booked successfully!");
         navigate("/");
       } else {
         console.error("Failed to book appointment");
@@ -130,14 +128,15 @@ const Appointment = () => {
   const availableTimes = Array.from({ length: 9 }, (_, index) => index + 8)
       .filter(hour => {
         const time = `${hour}:00`;
-        return !bookedTimes.includes(time) && time !== "12:00";
+        const selectedDate = new Date(formData.date);
+        const dayOfWeek = selectedDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+        return !bookedTimes.includes(time) && dayOfWeek !== 0 && dayOfWeek !== 6 && time !== "12:00";
       })
       .map(hour => (
           <option key={hour} value={`${hour}:00`}>
             {`${hour}:00-${hour + 1}:00`}
           </option>
       ));
-
 
   return (
       <div className="appo-container">
@@ -207,28 +206,6 @@ const Appointment = () => {
               </select>
             </div>
           </div>
-          {/*<div className="form-row">*/}
-          {/*  <div className="input">*/}
-          {/*    <input*/}
-          {/*        type="text"*/}
-          {/*        name="fullName"*/}
-          {/*        value={formData.fullName}*/}
-          {/*        onChange={handleInputChange}*/}
-          {/*        placeholder="Full Name"*/}
-          {/*        required*/}
-          {/*    />*/}
-          {/*  </div>*/}
-          {/*  <div className="input">*/}
-          {/*    <input*/}
-          {/*        type="email"*/}
-          {/*        name="userEmail"*/}
-          {/*        value={formData.userEmail}*/}
-          {/*        onChange={handleInputChange}*/}
-          {/*        placeholder="Email Address"*/}
-          {/*        required*/}
-          {/*    />*/}
-          {/*  </div>*/}
-          {/*</div>*/}
           <div className="submit-container">
             <button type="submit" className="submit-button">
               Book Appointment

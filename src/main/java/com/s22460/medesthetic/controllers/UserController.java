@@ -99,10 +99,19 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> updateUserRole(@PathVariable Long userId, @RequestBody UpdateRoleRequest updateRoleRequest) {
         try {
-            userService.updateUserRole(userId, updateRoleRequest.getRole());
+            Role newRole = updateRoleRequest.getRole();
+            User user = userService.getUserById(userId);
+            Role currentRole = user.getRole();
+
+            userService.updateUserRole(userId, newRole);
+
             // If new role is EMPLOYEE assign work hours from 8 am to 5 pm on weekdays
-            if (updateRoleRequest.getRole() == Role.EMPLOYEE) {
+            if (newRole == Role.EMPLOYEE) {
                 assignWorkHours(userId);
+            }
+            // If new role is USER and the current role was EMPLOYEE clear work hours
+            else if (newRole == Role.USER && currentRole == Role.EMPLOYEE) {
+                userService.clearAvailabilitySlots(userId);
             }
 
             return ResponseEntity.ok("User role updated successfully");
@@ -112,6 +121,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user role");
         }
     }
+
 
     private void assignWorkHours(Long userId) {
         User user = userService.getUserById(userId);
@@ -127,25 +137,18 @@ public class UserController {
 
     private List<AvailableSlotsDTO> generateWorkHours() {
         List<AvailableSlotsDTO> workHours = new ArrayList<>();
-        LocalDate today = LocalDate.now();
-        // Iterate through each day
-        LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-        LocalDate endOfWeek = nextMonday.plusDays(5);
-        for (LocalDate date = nextMonday; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
-            // Exclude Saturday and Sunday
-            if (date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                for (int hour = 8; hour < 17; hour++) {
-                    AvailableSlotsDTO workSlot = new AvailableSlotsDTO();
-                    workSlot.setDate(date);
-                    workSlot.setStartTime(LocalTime.of(hour, 0)); // Start of the hour
-                    workSlot.setEndTime(LocalTime.of(hour + 1, 0)); // Start of the next hour
-                    workHours.add(workSlot);
-                }
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+                AvailableSlotsDTO workSlot = new AvailableSlotsDTO();
+                workSlot.setDayOfWeek(dayOfWeek);
+                workSlot.setStartTime(LocalTime.of(8, 0)); // Start time is 8 am
+                workSlot.setEndTime(LocalTime.of(17, 0)); // End time is 5 pm
+                workHours.add(workSlot);
             }
         }
-
         return workHours;
     }
+
 
     @DeleteMapping("/admin/delete/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")

@@ -9,7 +9,10 @@ import java.time.LocalTime;
 @Data
 public class AvailableSlotsDTO {
     private Long id;
-    private LocalDate date;
+    private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
+//    private LocalDate date;
+//    private LocalTime startTime;
+//    private LocalTime endTime;
 }

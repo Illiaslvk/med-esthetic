@@ -129,17 +129,4 @@ public class AppointmentController {
     private Long getUserIdFromUserDetails(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername()).get().getId();
     }
-
-
-//    @GetMapping("/appointments/booked/{userId}")
-//    public ResponseEntity<List<AppointmentDTO>> getAllBookedAppointmentsForUser(@PathVariable Long userId) {
-//        List<Appointment> bookedAppo = appointmentService.getAllBookedAppoForUser(userId);
-//        List<AppointmentDTO> bookedAppoDTOs = bookedAppo.stream()
-//                .map(AppointmentDTO::fromEntity)
-//                .collect(Collectors.toList());
-//        return new ResponseEntity<>(bookedAppoDTOs, HttpStatus.OK);
-//    }
-
-
-
 }

@@ -204,13 +204,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         availableSlotsRepository.delete(availableSlots);
     }
 
-    @Override
-    public List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId, LocalDate date) {
-        List<AvailableSlots> availableSlots = availableSlotsRepository.findByUserIdAndDate(employeeId, date);
-        return availableSlots.stream()
-                .map(Mapper::convertAvailableSlotsToDTO)
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId, LocalDate date) {
+//        List<AvailableSlots> availableSlots = availableSlotsRepository.findByUserIdAndDate(employeeId, date);
+//        return availableSlots.stream()
+//                .map(Mapper::convertAvailableSlotsToDTO)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public void clearAvailabilitySlots(Long userId) {

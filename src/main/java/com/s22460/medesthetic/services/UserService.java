@@ -40,8 +40,7 @@ public interface UserService {
     AvailableSlotsDTO addAvailabilitySlot(Long employeeId, AvailableSlotsDTO availableSlotsDTO);
     AvailableSlotsDTO updateAvailabilitySlot(Long employeeId, Long availabilitySlotId, AvailableSlotsDTO availableSlotsDTO);
     void deleteAvailabilitySlot(Long employeeId, Long availabilitySlotId);
-//    List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId);
-    List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId, LocalDate date);
+//    List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId, LocalDate date);
 
     void clearAvailabilitySlots(Long userId);
 

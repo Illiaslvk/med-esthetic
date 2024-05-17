@@ -19,7 +19,8 @@ public class Mapper {
     public static AvailableSlotsDTO convertAvailableSlotsToDTO(AvailableSlots availableSlots) {
         AvailableSlotsDTO dto = new AvailableSlotsDTO();
         dto.setId(availableSlots.getId());
-        dto.setDate(availableSlots.getDate());
+//        dto.setDate(availableSlots.getDate());
+        dto.setDayOfWeek(availableSlots.getDayOfWeek());
         dto.setStartTime(availableSlots.getStartTime());
         dto.setEndTime(availableSlots.getEndTime());
         return dto;
@@ -28,7 +29,8 @@ public class Mapper {
     public static AvailableSlots convertAvailableSlotsToEntity(AvailableSlotsDTO dto) {
         AvailableSlots availableSlots = new AvailableSlots();
         availableSlots.setId(dto.getId());
-        availableSlots.setDate(dto.getDate());
+//        availableSlots.setDate(dto.getDate());
+        availableSlots.setDayOfWeek(dto.getDayOfWeek());
         availableSlots.setStartTime(dto.getStartTime());
         availableSlots.setEndTime(dto.getEndTime());
         return availableSlots;

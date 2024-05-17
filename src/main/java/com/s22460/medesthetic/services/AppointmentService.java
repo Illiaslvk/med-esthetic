@@ -13,7 +13,7 @@ public interface AppointmentService {
     Appointment getAppointmentById(Long appointmentId);
     List<Appointment> getAllCanceledAppointments();
 //    Appointment createAppointment(CreateAppointmentRequestDTO requestDTO);
-Appointment createAppointment(CreateAppointmentRequestDTO requestDTO, User user);
+    Appointment createAppointment(CreateAppointmentRequestDTO requestDTO, User user);
     Appointment cancelAppointment(Long appointmentId, String cancellationReason);
     List<String> getBookedTimesForEmployeeAndDate(Long employeeId, LocalDate date);
     List<Appointment> getAllBookedAppo();
