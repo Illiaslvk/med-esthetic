@@ -72,7 +72,7 @@ const LoginSignup = ({ setIsLoggedIn }) => {
 
       if (response.status === 200) {
         console.log("Signup successful")
-        setAction("Login") 
+        setAction("Login");
         resetSignupErrors();  // Reset errors when sign-up is successful
       } else {
         console.error("Signup failed");

@@ -30,14 +30,14 @@ public class Appointment {
     @Column(name = "cancellation_reason", length = 50)
     private String cancellationReason;
 
-    private String fullName;
+    private String userEmail;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = true)
+    @JoinColumn(name = "service_id", nullable = false)
     private AppoService appoService;
 
 }

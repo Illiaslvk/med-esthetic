@@ -39,10 +39,6 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/**").permitAll()
-//                        .requestMatchers("/api/auth/**").permitAll()
-//                        .requestMatchers("/api/admin/**").hasAuthority(Role.ADMIN.name())
-//                        .requestMatchers("/api/emp/**").hasAuthority(Role.EMPLOYEE.name())
-//                        .requestMatchers("/api/user/**").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated())
 // Configure session management to be stateless (using JWT) || stateless - application should not store any session-related information on the server side
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -216,17 +216,17 @@ public class UserController {
     }
 
 
-    @GetMapping("/current")
-    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        String userEmail = userDetails.getUsername();
-        User user = userRepository.findByEmail(userEmail).orElse(null);
-
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @GetMapping("/current")
+//    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+//        String userEmail = userDetails.getUsername();
+//        User user = userRepository.findByEmail(userEmail).orElse(null);
+//
+//        if (user != null) {
+//            return ResponseEntity.ok(user);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @GetMapping("/findByFirstName")
     public ResponseEntity<User> findUserByFirstName(@RequestParam String firstName) {
@@ -280,6 +280,13 @@ public class UserController {
     ) {
         userService.deleteAvailabilitySlot(employeeId, availabilitySlotId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/user/me")
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        return ResponseEntity.ok(UserDTO.fromEntity(user));
     }
 
 }

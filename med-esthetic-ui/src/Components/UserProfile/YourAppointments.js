@@ -35,7 +35,9 @@ const YourAppointments = () => {
             <tr>
               <th scope='col'>Service Name</th>
               <th scope='col'>Date</th>
+              <th scope='col'>Time</th>
               <th scope='col'>Duration</th>
+              <th scope='col'>Employee</th>
               <th scope='col'>View</th>
             </tr>
             </thead>
@@ -44,7 +46,9 @@ const YourAppointments = () => {
                 <tr key={appointment.id}>
                   <td data-label='Service Name'>{appointment.serviceName}</td>
                   <td data-label='Date'>{appointment.date}</td>
+                  <td data-label='Time'>{appointment.time}</td>
                   <td data-label='Duration'>{appointment.duration}</td>
+                  <td data-label='EmpName'>{appointment.empName}</td>
                   <td data-label='View'>
                     <button
                         className='main-button'

@@ -48,5 +48,30 @@
 
 :root {
     --fc-today-bg-color: rgba(99, 84, 71, 0.5);
+    --fc-event-border-color: #48392f;
 }
 
+
+.fc-daygrid-event-dot{
+    color: #171717 !important;
+}
+
+.fc-event, .fc-event-draggable, .fc-event-resizable, .fc-event-start, .fc-event-end, .fc-event-future, .fc-daygrid-event, .fc-daygrid-dot-event
+.fc-event-time, .fc-event-title, .fc-list-day-cushion, .fc-cell-shaded, .fc-dom-435-2024-05-17{
+    color: #48392f !important;
+}
+
+.fc-theme-standard .fc-list-day-cushion {
+    background-color: #635447 !important;
+    color: white !important;
+}
+.fc-list {
+    border: 1px solid #635447 !important;
+}
+
+.fc-col-header-cell-cushion, .fc-timegrid-axis-cushion, .fc-sticky{
+    color: white !important;
+}
+.fc-event-main-frame, .fc-event-main{
+    background-color: #48392f !important;
+}

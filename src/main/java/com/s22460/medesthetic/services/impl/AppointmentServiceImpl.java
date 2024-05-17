@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,28 +48,30 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-    @Override
-    public Appointment createAppointment(CreateAppointmentRequestDTO requestDTO) {
+    public Appointment createAppointment(CreateAppointmentRequestDTO requestDTO, User user) {
         // Validate the request
-        if (requestDTO == null || requestDTO.getEmployeeId() == null || requestDTO.getUserEmail() == null || requestDTO.getDate() == null || requestDTO.getTime() == null || requestDTO.getServiceId() == null) {
-            throw new IllegalArgumentException("Invalid appointment request. Please provide all required fields.");
-        }
-        // Fetch user and appoService entities from the database
-        User user = userRepository.findByEmail(requestDTO.getUserEmail())
-                .orElseThrow(() -> new NotFoundException("User not found with email: " + requestDTO.getUserEmail()));
+        // Fetch appoService entity from the database
         AppoService appoService = appoServiceRepository.findById(requestDTO.getServiceId())
                 .orElseThrow(() -> new NotFoundException("AppoService not found with ID: " + requestDTO.getServiceId()));
+
+        // Fetch the employee entity from the database using the provided employeeId
+        User employee = userRepository.findById(requestDTO.getEmployeeId())
+                .orElseThrow(() -> new NotFoundException("Employee not found with ID: " + requestDTO.getEmployeeId()));
+
         // Create the Appointment entity
         Appointment appointment = new Appointment();
-        appointment.setUser(user);
+        appointment.setUser(employee);
         appointment.setAppoService(appoService);
         appointment.setDate(requestDTO.getDate());
         appointment.setTime(requestDTO.getTime());
         appointment.setCanceled(false);
-        appointment.setFullName(requestDTO.getFullName());
+        appointment.setUserEmail(user.getEmail());
         // Save the appointment to the database
         return appointmentRepository.save(appointment);
     }
+
+
+
 
     @Override
     @Transactional
@@ -86,6 +89,32 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return appointment;
     }
+
+    @Override
+    public List<String> getBookedTimesForEmployeeAndDate(Long employeeId, LocalDate date) {
+        List<Appointment> appointments = appointmentRepository.findByUserIdAndDate(employeeId, date);
+        List<String> bookedTimes = appointments.stream()
+                .map(Appointment::getTime)
+                .collect(Collectors.toList());
+        return bookedTimes;
+    }
+
+    @Override
+    public List<Appointment> getAllBookedAppo() {
+        return appointmentRepository.findByCanceledFalse();
+    }
+
+
+    @Override
+    public List<Appointment> getAllBookedAppoForUser(String userEmail) {
+        return appointmentRepository.findByUserEmailAndCanceledFalse(userEmail);
+    }
+
+    @Override
+    public List<Appointment> getAllBookedAppoForEmployee(Long employeeId) {
+        return appointmentRepository.findByUserIdAndCanceledFalse(employeeId);
+    }
+
 
 
 }

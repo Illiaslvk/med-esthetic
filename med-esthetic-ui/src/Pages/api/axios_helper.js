@@ -17,6 +17,7 @@ axios.interceptors.response.use(
 
       if(retryCount >= MAX_RETRIES){
         console.log("Max retry limit reached. Stop further retries")
+        localStorage.removeItem("userRoles")
         return Promise.reject(error);
       }
       // Attempt to refresh the token
@@ -27,7 +28,6 @@ axios.interceptors.response.use(
       return request("POST", "/auth/refresh", {})
         .then((res) => {
           if (res.status === 200) {
-            // Retry the original request
             console.log("Token refreshed successfully.")
             const config = error.response.config
             return axios(config)
