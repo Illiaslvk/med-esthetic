@@ -41,6 +41,45 @@ const AdminSidebar = ({activepage}) => {
                     </div>
                 </Link>
             }
+            {/* Service List */}
+            {activepage === 'servicelist' ?
+                <div className='s2'>
+                    <svg fill="currentColor" viewBox="0 0 16 16" height="1em" width="1em">
+                        <path d="M8 2.5a.5.5 0 00-1 0v11a.5.5 0 001 0v-11zM4 6.5a.5.5 0 00-1 0v5a.5.5 0 001 0v-5zm4 0a.5.5 0 00-1 0v5a.5.5 0 001 0v-5zm4-3a.5.5 0 00-1 0v8a.5.5 0 001 0v-8z"/>
+                    </svg>
+                    <span>Service List</span>
+                </div>
+                :
+                <Link to='/admin/servicelist' className='stylenone'>
+                    <div className='s1'>
+                        <svg fill="currentColor" viewBox="0 0 16 16" height="1em" width="1em">
+                            <path d="M8 2.5a.5.5 0 00-1 0v11a.5.5 0 001 0v-11zM4 6.5a.5.5 0 00-1 0v5a.5.5 0 001 0v-5zm4 0a.5.5 0 00-1 0v5a.5.5 0 001 0v-5zm4-3a.5.5 0 00-1 0v8a.5.5 0 001 0v-8z"/>
+                        </svg>
+                        <span>Service List</span>
+                    </div>
+                </Link>
+            }
+            {/* Banned List */}
+            {activepage === 'bannedlist' ?
+                <div className='s2'>
+                    <svg viewBox="0 0 512 512" fill="currentColor" height="1em" width="1em">
+                        <path fill="none" stroke="currentColor" strokeMiterlimit={10} strokeWidth={32} d="M464 256 A208 208 0 0 1 256 464 A208 208 0 0 1 48 256 A208 208 0 0 1 464 256 z"/>
+                        <path fill="none" stroke="currentColor" strokeMiterlimit={10} strokeWidth={32} d="M108.92 108.92l294.16 294.16"/>
+                    </svg>
+                    <span>Banned List</span>
+                </div>
+                :
+                <Link to='/admin/bannedlist' className='stylenone'>
+                    <div className='s1'>
+                        <svg viewBox="0 0 512 512" fill="currentColor" height="1em" width="1em">
+                            <path fill="none" stroke="currentColor" strokeMiterlimit={10} strokeWidth={32} d="M464 256 A208 208 0 0 1 256 464 A208 208 0 0 1 48 256 A208 208 0 0 1 464 256 z"/>
+                            <path fill="none" stroke="currentColor" strokeMiterlimit={10} strokeWidth={32} d="M108.92 108.92l294.16 294.16"/>
+                        </svg>
+                        <span>Banned List</span>
+                    </div>
+                </Link>
+            }
+
         </div>
     )
 }

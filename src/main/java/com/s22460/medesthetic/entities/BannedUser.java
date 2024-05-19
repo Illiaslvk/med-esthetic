@@ -12,10 +12,10 @@ public class BannedUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String reason;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    private String reason;
 
 }

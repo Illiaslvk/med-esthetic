@@ -3,7 +3,6 @@ package com.s22460.medesthetic.controllers;
 import com.s22460.medesthetic.dtos.*;
 import com.s22460.medesthetic.entities.AppoService;
 import com.s22460.medesthetic.entities.User;
-import com.s22460.medesthetic.repository.BannedUserRepository;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.AppoServiceService;
 import com.s22460.medesthetic.services.UserService;
@@ -16,12 +15,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,15 +32,17 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final UserService userService;
-    private final BannedUserRepository bannedUserRepository;
     private final UserRepository userRepository;
     private final AppoServiceService appoServiceService;
+    private final PasswordEncoder passwordEncoder;
 
     //Admin
     @GetMapping("/admin/users")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+        List<User> users = userService.getAllUsers().stream()
+                .filter(user -> !user.isBanned())
+                .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
 
@@ -61,38 +61,38 @@ public class UserController {
         return ResponseEntity.ok(userDTO);
     }
 
-    @PostMapping("/admin/banUser")
+
+    @PostMapping("/admin/banUser/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> banUser(@RequestBody Map<String, String> request) {
-        String adminEmail = request.get("adminEmail");
-        String userToBanEmail = request.get("userToBanEmail");
-        String banReason = request.get("banReason");
-        // Handle banning a user
+    public ResponseEntity<?> banUser(@PathVariable Long userId, @RequestBody Map<String, String> request) {
         try {
-            userService.banUserByEmail(adminEmail, userToBanEmail, banReason);
-            return ResponseEntity.ok("User banned successfully");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            String reason = request.get("reason");
+            System.out.println("Banning user with reason: " + reason);
+            userService.banUser(userId, reason);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error banning user");
         }
     }
 
-    //                  MAKE UNBAN
-    @PostMapping("/admin/unbanUser")
+    @PostMapping("/admin/unbanUser/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> unbanUser(@RequestBody Map<String, String> request) {
-        String adminEmail = request.get("adminEmail");
-        String userToUnbanEmail = request.get("userToUnbanEmail");
-
+    public ResponseEntity<String> unbanUser(@PathVariable Long userId) {
         try {
-            userService.unbanUserByEmail(adminEmail, userToUnbanEmail);
-            return ResponseEntity.ok("User unbanned successfully");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            userService.unbanUser(userId);
+            return new ResponseEntity<>("User unbanned successfully", HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/admin/bannedUsers")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<BannedUserDTO>> getAllBannedUsers() {
+        List<BannedUserDTO> bannedUserDTOs = userService.getAllBannedUsers();
+        return ResponseEntity.ok(bannedUserDTOs);
     }
 
     @PutMapping("/admin/{userId}/role")
@@ -194,10 +194,24 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/addUser")
+    @PostMapping("/admin/add-user")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.addUser(user);
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        try {
+            // Set default role to USER if role is null
+            if (user.getRole() == null) {
+                user.setRole(Role.USER);
+            }
+
+            // Encrypt the password before saving the user
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPassword);
+
+            User savedUser = userService.addUser(user);
+            return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PutMapping("/updateUserById/{id}")
@@ -217,19 +231,6 @@ public class UserController {
         User user = userService.findByFullName(firstName, lastName);
         return ResponseEntity.ok(user);
     }
-
-
-//    @GetMapping("/current")
-//    public ResponseEntity<User> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-//        String userEmail = userDetails.getUsername();
-//        User user = userRepository.findByEmail(userEmail).orElse(null);
-//
-//        if (user != null) {
-//            return ResponseEntity.ok(user);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
 
     @GetMapping("/findByFirstName")
     public ResponseEntity<User> findUserByFirstName(@RequestParam String firstName) {

@@ -1,17 +1,16 @@
-import React, {useEffect, useState} from "react";
-import {Link, useLocation, useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import logo from "../Images/logo.png";
 import { request } from "../../Pages/api/axios_helper";
 
-
-const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
+const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
     const [menu, setMenu] = useState("");
     const [userDetails, setUserDetails] = useState(null);
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -42,7 +41,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn  }) => {
             await request("POST", "/auth/logout");
             setIsLoggedIn(false);
             localStorage.removeItem("userRoles");
-            setUserDetails(null); // Reset userDetails on logout
+            setUserDetails(null);
             navigate("/login");
         } catch (error) {
             console.error("Error during logout:", error);

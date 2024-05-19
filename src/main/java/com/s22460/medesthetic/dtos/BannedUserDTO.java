@@ -1,5 +1,7 @@
 package com.s22460.medesthetic.dtos;
 
+import com.s22460.medesthetic.entities.Appointment;
+import com.s22460.medesthetic.entities.BannedUser;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,16 +14,17 @@ import lombok.NoArgsConstructor;
 public class BannedUserDTO {
 
     private Long id;
-
     private String reason;
+    private String userName;
+    private Long userId;
 
-    @Email(message = "Invalid email address")
-    @NotBlank(message = "Email cannot be blank")
-    private String userEmail;
+    public static BannedUserDTO fromEntity(BannedUser bannedUser) {
+        BannedUserDTO dto = new BannedUserDTO();
+        dto.setId(bannedUser.getId());
+        dto.setReason(bannedUser.getReason());
+        dto.setUserName(bannedUser.getUser().getFirstName() + " " + bannedUser.getUser().getLastName());
+        dto.setUserId(bannedUser.getUser().getId());
 
-    @NotBlank(message = "First name cannot be blank")
-    private String userFirstName;
-
-    @NotBlank(message = "Last name cannot be blank")
-    private String userLastName;
+        return dto;
+    }
 }

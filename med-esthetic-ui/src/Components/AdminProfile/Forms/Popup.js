@@ -24,6 +24,7 @@ const Popup = ({ user, onClose, onUpdateRole }) => {
                 <p>Name: {user.firstName}</p>
                 <p>Email: {user.email}</p>
                 <p>Current Role: {user.role}</p>
+                {/*htmlFor provides connection between label and the input element*/}
                 <label htmlFor="new-role">New Role:</label>
                 <select
                     id="new-role"
@@ -34,8 +35,10 @@ const Popup = ({ user, onClose, onUpdateRole }) => {
                     <option value="EMPLOYEE">EMPLOYEE</option>
                     <option value="USER">USER</option>
                 </select>
-                <button className="update-button" onClick={handleSubmit}>Update Role</button>
-                <button className="close-button" onClick={onClose}>Close</button>
+                <div className="button-container">
+                    <button className="update-button" onClick={handleSubmit}>Update Role</button>
+                    <button className="close-button" onClick={onClose}>Close</button>
+                </div>
             </div>
         </div>
     );

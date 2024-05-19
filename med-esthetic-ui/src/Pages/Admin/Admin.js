@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import UsersList from "../../Components/AdminProfile/UsersList";
 import { fetchAllUsers } from '../../Components/services/userService';
 import AdminTab from "../../Components/AdminProfile/AdminTab";
+import ServiceList from "../../Components/AdminProfile/ServiceList";
+import BannedUserList from "../../Components/AdminProfile/BannedUserList";
 
 const Admin = () => {
     const { activepage } = useParams()
@@ -63,7 +65,9 @@ const Admin = () => {
                                                               searchQuery={searchQuery}
                                                               handleSearch={handleSearch}
                                                               handleChange={handleChange} />}
-                    {/*{activepage === "" && }*/}
+                    {activepage === "servicelist" && <ServiceList /> }
+                    {activepage === "bannedlist" && <BannedUserList />}
+
                 </div>
             </div>
         </div>

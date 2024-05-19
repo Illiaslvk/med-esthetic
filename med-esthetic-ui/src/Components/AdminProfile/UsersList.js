@@ -1,25 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import Popup from './Popup';
+import Popup from './Forms/Popup';
+import AddUserForm from './Forms/AddUserForm';
+import BanUserForm from './Forms/BanUserForm';
 import "./AdminProfile.css";
 import { request } from "../../Pages/api/axios_helper";
-import {toast, ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [userList, setUserList] = useState([]);
+    const [isAddUserFormVisible, setIsAddUserFormVisible] = useState(false);
+    const [isBanUserFormVisible, setIsBanUserFormVisible] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
 
     useEffect(() => {
         setUserList(users);
     }, [users]);
-
-    const handleDetailsClick = (user) => {
-        setSelectedUser(user);
-    };
-
-    const handleClosePopup = () => {
-        setSelectedUser(null);
-    };
 
     const handleUpdateRole = async (userId, newRole) => {
         try {
@@ -27,7 +24,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
             if (response.status === 200) {
                 console.log(`User with ID ${userId} role updated successfully`);
                 toast.success("Role changed successfully!");
-                fetchUserList(); // Refresh the user list after updating the role
+                fetchUserList();
                 handleClosePopup();
             } else {
                 console.error('Failed to update user role');
@@ -36,7 +33,6 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
             console.error('Error updating user role:', error.message);
         }
     };
-
 
     const handleDeleteUser = async (userId) => {
         try {
@@ -65,17 +61,46 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
         }
     };
 
+    const handleAddUserClick = () => {
+        setIsAddUserFormVisible(true);
+    };
+
+    const handleCloseAddUserForm = () => {
+        setIsAddUserFormVisible(false);
+    };
+
+    const handleDetailsClick = (user) => {
+        setSelectedUser(user);
+    };
+
+    const handleClosePopup = () => {
+        setSelectedUser(null);
+    };
+
+    const handleBanUser = (userId) => {
+        setSelectedUserId(userId);
+        setIsBanUserFormVisible(true);
+    };
+
+    const handleBanUserFormClose = () => {
+        setIsBanUserFormVisible(false);
+        fetchUserList();
+    };
+
     return (
         <div className='users-list'>
             <h1 className='main-heading'>Users List</h1>
             <div className='search-container'>
-                <input
-                    type='text'
-                    placeholder='Search by name...'
-                    value={searchQuery}
-                    onChange={handleChange}
-                />
-                <button onClick={handleSearch}>Search</button>
+                <div className='search-elements'>
+                    <input
+                        type='text'
+                        placeholder='Search by name...'
+                        value={searchQuery}
+                        onChange={handleChange}
+                    />
+                    <button onClick={handleSearch}>Search</button>
+                </div>
+                <button onClick={handleAddUserClick}>Add User</button>
             </div>
             <div className="table-container">
                 <table className='user-table'>
@@ -93,6 +118,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                             <td>{user.email}</td>
                             <td>
                                 <button className='details-button' onClick={() => handleDetailsClick(user)}>Details</button>
+                                <button className='ban-button' onClick={() => handleBanUser(user.id)}>Ban</button>
                                 <button className='delete-button' onClick={() => handleDeleteUser(user.id)}>Delete</button>
                             </td>
                         </tr>
@@ -106,6 +132,12 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                     onClose={handleClosePopup}
                     onUpdateRole={(userId, newRole) => handleUpdateRole(userId, newRole)}
                 />
+            )}
+            {isAddUserFormVisible && (
+                <AddUserForm onClose={handleCloseAddUserForm} onUserAdded={fetchUserList} />
+            )}
+            {isBanUserFormVisible && (
+                <BanUserForm onClose={handleBanUserFormClose} userId={selectedUserId} fetchUserList={fetchUserList}/>
             )}
             <ToastContainer position="bottom-right" autoClose={3000} />
         </div>

@@ -1,6 +1,7 @@
 package com.s22460.medesthetic.dtos;
 
 import com.s22460.medesthetic.entities.AvailableSlots;
+import com.s22460.medesthetic.entities.BannedUser;
 import com.s22460.medesthetic.entities.User;
 
 public class Mapper {
@@ -35,5 +36,7 @@ public class Mapper {
         availableSlots.setEndTime(dto.getEndTime());
         return availableSlots;
     }
+
+
 
 }

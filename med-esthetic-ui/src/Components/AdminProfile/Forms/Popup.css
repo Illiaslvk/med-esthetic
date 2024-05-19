@@ -1,0 +1,78 @@
+.popup-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: papayawhip;
+    padding: 30px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.popup-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-inner h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #635447;
+    text-align: center;
+}
+
+.popup-inner p {
+    margin-bottom: 10px;
+}
+
+.popup-inner label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #635447;
+    font-weight: bold;
+}
+
+.popup-inner select {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #635447;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #635447;
+    font-size: 14px;
+}
+
+.popup-inner .button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup-inner button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.popup-inner .update-button {
+    background-color: #e0cebb;
+    color: #635447;
+    margin-right: 10px;
+}
+
+.popup-inner .update-button:hover {
+    background-color: #c4b29e;
+}
+
+.popup-inner .close-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.popup-inner .close-button:hover {
+    opacity: 0.9;
+}

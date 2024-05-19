@@ -1,6 +1,7 @@
 package com.s22460.medesthetic.services.impl;
 
 import com.s22460.medesthetic.dtos.AvailableSlotsDTO;
+import com.s22460.medesthetic.dtos.BannedUserDTO;
 import com.s22460.medesthetic.dtos.Mapper;
 import com.s22460.medesthetic.dtos.UserDTO;
 import com.s22460.medesthetic.entities.AvailableSlots;
@@ -92,59 +93,37 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void banUserByEmail(String adminEmail, String userToBanEmail, String banReason) {
-        User admin = userRepository.findByEmail(adminEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Admin not found"));
+    public void banUser(Long userId, String reason) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (admin.isAdmin()) {
-            User userToBan = userRepository.findByEmail(userToBanEmail)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        BannedUser bannedUser = new BannedUser();
+        bannedUser.setUser(user);
+        bannedUser.setReason(reason);
 
-            if (!userToBan.isBanned()) {
-                userToBan.banUser();
+        bannedUserRepository.save(bannedUser);
 
-                // Save user with ban status
-                userRepository.save(userToBan);
+        user.setBanned(true);
+        userRepository.save(user);
+    }
 
-                // add reason for ban
-                BannedUser bannedUser = new BannedUser();
-                bannedUser.setUser(userToBan);
-                bannedUser.setReason(banReason);
-
-                bannedUserRepository.save(bannedUser);
-            } else {
-                throw new IllegalStateException("User is already banned");
-            }
-        } else {
-            throw new IllegalStateException("Only admins can ban users");
-        }
+    public List<BannedUserDTO> getAllBannedUsers() {
+        return bannedUserRepository.findAll().stream()
+                .map(BannedUserDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void unbanUserByEmail(String adminEmail, String userToUnbanEmail) {
-        User admin = userRepository.findByEmail(adminEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Admin not found"));
+    public void unbanUser(Long userId) {
+        User userToUnban = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (!admin.isAdmin()) {
-            throw new AccessDeniedException("Only admins can unban users");
-        }
+        BannedUser bannedUser = bannedUserRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("BannedUser entry not found"));
+        bannedUserRepository.delete(bannedUser);
 
-        User userToUnban = userRepository.findByEmail(userToUnbanEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        if (userToUnban.isBanned()) {
-            userToUnban.unbanUser();
-
-            // Save user with unban status
-            userRepository.save(userToUnban);
-
-            // Remove BannedUser entity
-            BannedUser bannedUser = bannedUserRepository.findByUser(userToUnban)
-                    .orElseThrow(() -> new IllegalStateException("BannedUser entry not found"));
-            bannedUserRepository.delete(bannedUser);
-        } else {
-            throw new IllegalStateException("User is not currently banned");
-        }
+        userToUnban.setBanned(false);
+        userRepository.save(userToUnban);
     }
 
     public User findUserByFirstName(String firstName) {
@@ -203,14 +182,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         availableSlotsRepository.delete(availableSlots);
     }
-
-//    @Override
-//    public List<AvailableSlotsDTO> getAvailableSlotsForEmployee(Long employeeId, LocalDate date) {
-//        List<AvailableSlots> availableSlots = availableSlotsRepository.findByUserIdAndDate(employeeId, date);
-//        return availableSlots.stream()
-//                .map(Mapper::convertAvailableSlotsToDTO)
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public void clearAvailabilitySlots(Long userId) {
