@@ -95,8 +95,8 @@ public class AppointmentController {
         return new ResponseEntity<>(bookedTimes, HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/appointments/booked")
+    @GetMapping("/appo/all")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<AppointmentDTO>> getAllBookedAppointments() {
         List<Appointment> bookedAppo = appointmentService.getAllBookedAppo();
         List<AppointmentDTO> bookedAppoDTOs = bookedAppo.stream()

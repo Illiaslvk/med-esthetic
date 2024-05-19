@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -10,14 +10,25 @@ import "./Calendar.css";
 
 const Calendar = () => {
     const [currentEvents, setCurrentEvents] = useState([]);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const userRoles = JSON.parse(localStorage.getItem("userRoles"));
+        setIsAdmin(userRoles?.includes("ADMIN"));
+    }, []);
 
     const fetchBookedAppointments = async () => {
         try {
-            const response = await request("GET", "/appo/booked");
+            let response;
+            if (isAdmin) {
+                response = await request("GET", "/appo/all");
+            } else {
+                response = await request("GET", "/appo/booked");
+            }
             if (response && response.status === 200) {
-                const bookedAppointments = response.data;
-                console.log("Booked Appointments:", bookedAppointments);
-                const events = bookedAppointments.map(appointment => {
+                const appointments = response.data;
+                console.log("Appointments:", appointments);
+                const events = appointments.map(appointment => {
                     const startDateTime = `${appointment.date}T${appointment.time}`;
                     const endDateTime = `${appointment.date}T${appointment.time}`;
                     return {
@@ -29,12 +40,13 @@ const Calendar = () => {
                 });
                 setCurrentEvents(events);
             } else {
-                console.error("Failed to fetch booked appointments");
+                console.error("Failed to fetch appointments");
             }
         } catch (error) {
-            console.error("Error fetching booked appointments:", error.message);
+            console.error("Error fetching appointments:", error.message);
         }
     };
+
 
 
     const handleDatesSet = () => {
