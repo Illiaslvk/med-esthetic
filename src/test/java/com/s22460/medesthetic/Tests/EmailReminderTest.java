@@ -21,7 +21,7 @@ public class EmailReminderTest {
     @InjectMocks
     private EmailServiceImpl emailService;
 
-    @Mock
+    @Mock //create a mock object for the JavaMailSender; allow you to set expectations (what methods will be called and with what arguments)
     private JavaMailSender emailSender;
 
     @BeforeEach
@@ -31,12 +31,13 @@ public class EmailReminderTest {
 
     @Test
     public void testSendEmail() {
-        String to = "test@example.com";
+        String to = "test@gmail.com";
         String subject = "Test Subject";
         String body = "Test Body";
 
         emailService.sendEmail(to, subject, body);
 
+        // Captures the arguments of the sent email
         ArgumentCaptor<SimpleMailMessage> messageCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(emailSender).send(messageCaptor.capture());
         SimpleMailMessage sentMessage = messageCaptor.getValue();
@@ -46,25 +47,23 @@ public class EmailReminderTest {
         assertEquals(body, sentMessage.getText());
     }
 
-    @Test
+
+    @Test // Tests sending a reminder email
     public void testSendReminderEmail() throws MessagingException {
-        // Create a mock MimeMessage
         MimeMessage mimeMessage = mock(MimeMessage.class);
         when(emailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-        // Call the method under test
-        emailService.sendReminderEmail("illiaslvk@gmail.com", "Test Subject", "Test Body");
-
-        // Verify interactions
+        emailService.sendReminderEmail("test@gmail.com", "Test Subject", "Test Body");
+        // Verify that the email sender sends the message
         verify(emailSender, times(1)).send(mimeMessage);
     }
 
     @Test
     public void testSendEmailWithAppointmentDTO() {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
-        appointmentDTO.setUserEmail("test@example.com");
-        appointmentDTO.setServiceName("Service Name");
-        appointmentDTO.setEmpName("Employee Name");
+        appointmentDTO.setUserEmail("test@gmail.com");
+        appointmentDTO.setServiceName("Service");
+        appointmentDTO.setEmpName("Employee");
         appointmentDTO.setDate("2024-05-22");
         appointmentDTO.setTime("10:00 AM");
         appointmentDTO.setDuration(60);
@@ -79,7 +78,7 @@ public class EmailReminderTest {
         ArgumentCaptor<SimpleMailMessage> messageCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(emailSender).send(messageCaptor.capture());
         SimpleMailMessage sentMessage = messageCaptor.getValue();
-
+        //SimpleMailMessage returns an array of emails thats why we take 1st element [0]
         assertEquals(to, sentMessage.getTo()[0]);
         assertEquals(subject, sentMessage.getSubject());
         assertEquals(body, sentMessage.getText());
