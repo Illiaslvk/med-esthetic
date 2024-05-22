@@ -66,6 +66,7 @@ public class AppoServiceServiceImpl implements AppoServiceService {
         service.setServiceName(updatedServiceDTO.getServiceName());
         service.setDuration(updatedServiceDTO.getDuration());
         service.setPrice(updatedServiceDTO.getPrice());
+        service.setDescription(updatedServiceDTO.getDescription());
 
         return appoServiceRepository.save(service);
     }

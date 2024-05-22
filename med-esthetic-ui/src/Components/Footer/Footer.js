@@ -5,7 +5,7 @@ const Footer = () => {
     return (
         <div className="footer-copyright">
             <hr />
-            <p>telegram link</p>
+            <p>Telegram URL && Our Contacts</p>
         </div>
     )
 }

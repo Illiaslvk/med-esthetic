@@ -108,6 +108,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                     <tr>
                         <th>Full Name</th>
                         <th>Email</th>
+                        <th>Role</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -116,6 +117,7 @@ const UsersList = ({ users, searchQuery, handleSearch, handleChange }) => {
                         <tr key={user.id}>
                             <td>{user.firstName} {user.lastName}</td>
                             <td>{user.email}</td>
+                            <td>{user.role}</td>
                             <td>
                                 <button className='details-button' onClick={() => handleDetailsClick(user)}>Details</button>
                                 <button className='ban-button' onClick={() => handleBanUser(user.id)}>Ban</button>

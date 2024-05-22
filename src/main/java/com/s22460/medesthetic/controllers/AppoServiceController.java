@@ -40,7 +40,12 @@ public class AppoServiceController {
     }
 
     @PostMapping("/services/add")
-    public ResponseEntity<AppoService> addService(@RequestBody AppoService appoService) {
+    public ResponseEntity<AppoService> addService(@RequestBody AppoServiceDTO appoServiceDTO) {
+        AppoService appoService = new AppoService();
+        appoService.setServiceName(appoServiceDTO.getServiceName());
+        appoService.setDuration(appoServiceDTO.getDuration());
+        appoService.setPrice(appoServiceDTO.getPrice());
+        appoService.setDescription(appoServiceDTO.getDescription());
         AppoService addedAppoService = appoServiceService.addService(appoService);
         return new ResponseEntity<>(addedAppoService, HttpStatus.CREATED);
     }

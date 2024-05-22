@@ -4,7 +4,7 @@ import './AdminTab.css';
 const AdminTab = () => {
     return (
         <div className='admin-tab'>
-            <h1 className='main-heading'>Admin Info:</h1>
+            <h1 className='main-heading-admin'>Admin Info:</h1>
 
             <div className='admin-info'>
                 <ul>

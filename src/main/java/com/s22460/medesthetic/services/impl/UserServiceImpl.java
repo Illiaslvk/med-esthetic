@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,13 +66,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User updateUser(Long id, User user) {
-        getUserById(id); // Ensure the user exists
-        user.setId(id);// Set the id of the provided user to the existing user id
-        return userRepository.save(user);
-    }
-
-    @Override
     public void deleteUser(Long id) {
         getUserById(id);
         userRepository.deleteById(id);
@@ -85,14 +79,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     //Block User
     @Override
-    public UserDTO getUserProfile(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        return Mapper.convertToDTO(user);
-    }
-
-    @Override
     public void banUser(Long userId, String reason) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -100,7 +86,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         BannedUser bannedUser = new BannedUser();
         bannedUser.setUser(user);
         bannedUser.setReason(reason);
-
+        bannedUser.setEmail(user.getEmail());
         bannedUserRepository.save(bannedUser);
 
         user.setBanned(true);
@@ -124,11 +110,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         userToUnban.setBanned(false);
         userRepository.save(userToUnban);
-    }
-
-    public User findUserByFirstName(String firstName) {
-        return userRepository.findByFirstName(firstName)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found by first name: " + firstName));
     }
 
     public void updateUserRole(Long userId, Role newRole) {
@@ -189,6 +170,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         availableSlotsRepository.deleteAll(existingSlots);
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public void updateRemindersPreference(Long userId, boolean remindersEnabled) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with ID: " + userId));
+        user.setRemindersEnabled(remindersEnabled);
+        userRepository.save(user);
+    }
 
 
 }

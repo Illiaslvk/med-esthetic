@@ -8,6 +8,7 @@ const AddServiceForm = ({ onClose, onServiceAdded }) => {
         serviceName: '',
         duration: '',
         price: '',
+        description: '',
     });
 
     const handleChange = (e) => {
@@ -47,6 +48,10 @@ const AddServiceForm = ({ onClose, onServiceAdded }) => {
                 <label>
                     Price:
                     <input type="text" name="price" value={formData.price} onChange={handleChange} required />
+                </label>
+                <label>
+                    Description (max 200 characters):
+                    <input type="text" name="description" value={formData.description} onChange={handleChange} maxLength={200} />
                 </label>
                 <button type="submit">Add Service</button>
                 <button type="button" onClick={onClose}>Cancel</button>

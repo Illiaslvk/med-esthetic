@@ -12,4 +12,6 @@ public interface BannedUserRepository extends JpaRepository<BannedUser, Long> {
     @Query("SELECT b FROM BannedUser b WHERE b.user.id = :userId")
     Optional<BannedUser> findByUserId(@Param("userId") Long userId);
 
+    BannedUser findByEmail(String email);
+
 }

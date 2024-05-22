@@ -37,18 +37,20 @@ const Appointment = () => {
         }));
       } else {
         console.error("Failed to fetch user details");
+        toast.error("Failed to fetch user details. Please log in.");
+
       }
     } catch (error) {
       console.error("Error fetching user details: ", error.message);
     }
   };
 
-
   useEffect(() => {
     if (selectedEmployee) {
       fetchAssignedServices(selectedEmployee);
     }
   }, [selectedEmployee]);
+
   const fetchEmployees = async () => {
     try {
       const response = await request("GET", "/employees");
@@ -80,6 +82,7 @@ const Appointment = () => {
   const handleEmployeeChange = (e) => {
     setSelectedEmployee(e.target.value);
     setFormData({ ...formData, employeeId: e.target.value });
+    setAssignedServices([]); //reset services if emp changes
   };
 
   const handleInputChange = (e) => {
@@ -89,15 +92,12 @@ const Appointment = () => {
 
   const handleDateChange = async (e) => {
     const selectedDate = e.target.value;
-    console.log("Selected Employee:", selectedEmployee);
-    console.log("Selected Date:", selectedDate);
 
     try {
       const response = await request("GET", `/appointments/employee/${selectedEmployee}/date/${selectedDate}/booked-times`);
       if (!response.data) {
         throw new Error('No data received');
       }
-      console.log("Response:", response);
       const bookedTimes = response.data;
       setBookedTimes(bookedTimes);
     } catch (error) {
@@ -106,9 +106,31 @@ const Appointment = () => {
     }
   };
 
+  const availableTimes = Array.from({ length: 9 }, (_, index) => index + 10)
+      .filter(hour => {
+        const time = `${hour}:00`;
+        const selectedDate = new Date(formData.date);
+        const dayOfWeek = selectedDate.getDay();
+        return !bookedTimes.includes(time) && dayOfWeek !== 0 && dayOfWeek !== 6 && time !== "13:00";
+      })
+      .map(hour => (
+          <option key={hour} value={`${hour}:00`}>
+            {`${hour}:00-${hour + 1}:00`}
+          </option>
+      ));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("You must be logged in to book an appointment.");
+      return;
+    }
+
+    if (!formData.employeeId) {
+      toast.error("Please start from employee.");
+      return;
+    }
+
     try {
       const response = await request("POST", "/appointments/create", formData);
       if (response.status === 201) {
@@ -125,18 +147,7 @@ const Appointment = () => {
     }
   };
 
-  const availableTimes = Array.from({ length: 9 }, (_, index) => index + 8)
-      .filter(hour => {
-        const time = `${hour}:00`;
-        const selectedDate = new Date(formData.date);
-        const dayOfWeek = selectedDate.getDay(); // 0 (Sunday) to 6 (Saturday)
-        return !bookedTimes.includes(time) && dayOfWeek !== 0 && dayOfWeek !== 6 && time !== "12:00";
-      })
-      .map(hour => (
-          <option key={hour} value={`${hour}:00`}>
-            {`${hour}:00-${hour + 1}:00`}
-          </option>
-      ));
+
 
   return (
       <div className="appo-container">
@@ -147,12 +158,7 @@ const Appointment = () => {
         <form className="appo-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="input">
-              <select
-                  name="employeeId"
-                  value={selectedEmployee}
-                  onChange={handleEmployeeChange}
-                  required
-              >
+              <select name="employeeId" value={selectedEmployee} onChange={handleEmployeeChange} required>
                 <option value="">Select Employee</option>
                 {employees.map((employee) => (
                     <option key={employee.id} value={employee.id}>
@@ -164,12 +170,7 @@ const Appointment = () => {
           </div>
           <div className="form-row">
             <div className="input">
-              <select
-                  name="serviceId"
-                  value={formData.serviceId}
-                  onChange={handleInputChange}
-                  required
-              >
+              <select name="serviceId" value={formData.serviceId} onChange={handleInputChange} required>
                 <option value="">Select Service</option>
                 {assignedServices.map((service) => (
                     <option key={service.id} value={service.id}>
@@ -181,26 +182,12 @@ const Appointment = () => {
           </div>
           <div className="form-row">
             <div className="input">
-              <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={(e) => {
-                    handleInputChange(e);
-                    handleDateChange(e);
-                  }}
-                  required
-              />
+              <input type="date" name="date" value={formData.date} onChange={(e) => {handleInputChange(e); handleDateChange(e);}} required/>
             </div>
           </div>
           <div className="form-row">
             <div className="input">
-              <select
-                  name="time"
-                  value={formData.time}
-                  onChange={handleInputChange}
-                  required
-              >
+              <select name="time" value={formData.time} onChange={handleInputChange} required>
                 <option value="">Select Time</option>
                 {availableTimes}
               </select>

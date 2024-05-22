@@ -11,39 +11,27 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface UserService {
     UserDetailsService userDetailsService();
-
     List<User> getAllUsers();
-
     User getUserById(Long id);
-
     User addUser(User user);
-
-    User updateUser(Long id, User user);
-
     void deleteUser(Long id);
-
     User findByFullName(String firstName, String lastName);
-
-    UserDTO getUserProfile(Long userId);
-
     void updateUserRole(Long userId, Role newRole);
-
     List<User> getAllEmployees();
-
     AvailableSlotsDTO addAvailabilitySlot(Long employeeId, AvailableSlotsDTO availableSlotsDTO);
     AvailableSlotsDTO updateAvailabilitySlot(Long employeeId, Long availabilitySlotId, AvailableSlotsDTO availableSlotsDTO);
     void deleteAvailabilitySlot(Long employeeId, Long availabilitySlotId);
-
     void clearAvailabilitySlots(Long userId);
-
     List<BannedUserDTO> getAllBannedUsers();
-
     void unbanUser(Long userId);
-
     void banUser(Long userId, String reason);
+    //for reviews page
+    Optional<User> findByEmail(String email);
+    void updateRemindersPreference(Long userId, boolean remindersEnabled);
 
 }

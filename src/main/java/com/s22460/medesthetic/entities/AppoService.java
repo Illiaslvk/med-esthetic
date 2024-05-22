@@ -29,6 +29,8 @@ public class AppoService {
 
     private String price;
 
+    private String description;
+
     @OneToMany(mappedBy = "appoService", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;
 

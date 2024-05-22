@@ -9,7 +9,8 @@ const YourAppointments = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await request('GET', '/appointments', {});
+        // const response = await request('GET', '/appointments', {});
+        const response = await request('GET', '/appo/booked', {});
         if (response.status !== 200) {
           throw new Error('Failed to fetch appointment data');
         }
@@ -28,7 +29,7 @@ const YourAppointments = () => {
 
   return (
       <div className='your-appo'>
-        <h1 className='main-heading'>Your Appointments</h1>
+        <h1 className='main-heading'>Appointments History</h1>
         <div className='appo-table-wrapper'>
           <table className='your-appo-table'>
             <thead>
@@ -50,12 +51,7 @@ const YourAppointments = () => {
                   <td data-label='Duration'>{appointment.duration}</td>
                   <td data-label='EmpName'>{appointment.empName}</td>
                   <td data-label='View'>
-                    <button
-                        className='main-button'
-                        onClick={() => handleViewAppointment(appointment.id)}
-                    >
-                      View
-                    </button>
+                    <button className='main-button' onClick={() => handleViewAppointment(appointment.id)}>View</button>
                   </td>
                 </tr>
             ))}

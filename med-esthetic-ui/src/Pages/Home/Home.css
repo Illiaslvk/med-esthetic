@@ -1,23 +1,18 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body, html {
-  font-family: 'Arial', sans-serif;
-}
-
 .home-container {
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 20px;
+  background-color: papayawhip;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .home-header {
   text-align: center;
   padding: 50px 0;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   margin-bottom: 30px;
 }
 
@@ -34,7 +29,7 @@ body, html {
 
 .home-content {
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.9); 
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   margin-bottom: 30px;
@@ -53,14 +48,41 @@ body, html {
   margin-bottom: 30px;
 }
 
-.home-services h2 {
-  color: #333;
-  margin-bottom: 10px;
+/* Styles for home-services */
+.home-services-container {
+  display: flex;
+  justify-content: center;
 }
 
-.home-services p {
-  color: #666;
+.home-services-card {
+  width: 38rem;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
+
+.home-services-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.home-services-card-body {
+  padding: 1.25rem;
+  background-color: papayawhip;
+}
+
+.home-services-card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.home-services-card-text {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 
 .home-testimonials {
   text-align: center;
@@ -81,7 +103,9 @@ body, html {
 .home-footer {
   text-align: center;
   padding: 20px 0;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .home-footer p {
@@ -145,4 +169,27 @@ li {
 .card:hover {
   transform: scale(1.02);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    width: 95%;
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .home-header {
+    padding: 30px 0;
+  }
+
+  .home-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .home-services-container,
+  .home-services-card,
+  .card {
+    width: 100%;
+    margin: 10px 0;
+  }
 }

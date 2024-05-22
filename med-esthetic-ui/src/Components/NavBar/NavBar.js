@@ -71,7 +71,9 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
             </div>
 
             <div className="mobile-menu-icon" onClick={toggleMobileMenu}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 -960 960 960" width="26"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 -960 960 960" width="26">
+                    <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+                </svg>
             </div>
 
             <ul className={`nav-menu ${mobileMenuOpen ? 'active' : ''}`}>
@@ -87,15 +89,18 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
                 <li onClick={() => setMenu("appointment")}>
                     <Link className='stylenone' to="/appointment">APPOINTMENT</Link>{" "}{menu === "appointment" ? <hr /> : <></>}
                 </li>
-                <li className="mobile-login-item">
-                    {isLoggedIn ? (
-                        <div onClick={handleLogout}>Log out</div>) : (<Link to="/login">Login</Link>)}
-                </li>
                 {isAdmin && (
-                    <li>
-                        <Link to="/admin/admintab">Admin Panel</Link>{" "}{menu === "admin" ? <hr /> : <></>}
+                    <li onClick={() => setMenu("admin")}>
+                        <Link className='stylenone' to="/admin/admintab">Admin Panel</Link>{" "}{menu === "admin" ? <hr /> : <></>}
                     </li>
                 )}
+                <li className="mobile-login-item">
+                    {isLoggedIn ? (
+                        <div onClick={handleLogout}>Log out</div>
+                    ) : (
+                        <Link to="/login">Login</Link>
+                    )}
+                </li>
             </ul>
 
             <div className="nav-login">
@@ -108,14 +113,13 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
                         </div>
                         {menu === "userOptions" && (
                             <div className="user-options">
-                                <Link className="options" to="/user/accountsettings">My Profile</Link>
-                                <Link className="options" to="/user/changepassword">Settings</Link>
+                                <Link className="options" to="/user/myprofile">My Profile</Link>
                                 <Link className="options" to="/user/appointments">Appointments</Link>
                                 <Link className="options" to="/calendar">Calendar</Link>
                                 {isAdmin && (
                                     <Link className="options" to="/admin/admintab"> Admin </Link>
                                 )}
-                                <Link className="options" onClick={handleLogout} >Log out</Link>
+                                <Link className="options" onClick={handleLogout}>Log out</Link>
                             </div>
                         )}
                     </div>

@@ -20,6 +20,7 @@ public class AppointmentDTO {
     private String cancellationReason;
     private String serviceName;
     private String empName;
+    private Long employeeId;
     private String userEmail;
     private int duration;
 
@@ -28,7 +29,9 @@ public class AppointmentDTO {
         dto.id = appointment.getId();
         dto.serviceName = appointment.getAppoService().getServiceName();
         dto.empName = appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
+        dto.employeeId = appointment.getUser().getId();
         dto.userEmail = appointment.getUserEmail();
+
         dto.date = appointment.getDate().toString();
         dto.canceled = appointment.isCanceled();
         dto.time = (appointment.getTime());

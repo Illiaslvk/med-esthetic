@@ -5,7 +5,7 @@
   background-color: papayawhip;
   padding: 10px;
   position: relative;
-  z-index: 4
+  z-index: 4;
 }
 
 .nav-logo {
@@ -91,6 +91,7 @@
 .user-dropdown:hover .user-options {
   display: block;
 }
+
 .user-dropdown:hover .userName {
   background-color: #e0cebb;
 }
@@ -110,7 +111,7 @@
 
 .login-button {
   background-color: #635447;
-  color: #635447;
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   font-size: 16px;
@@ -200,13 +201,12 @@
     display: block;
   }
 
-  .mobile-login {
-    padding: 10px;
-    text-align: center;
-    border-top: 1px solid #ccc;
+  .mobile-login-item {
+    display: block;
   }
 
   .nav-login {
     display: none;
   }
+
 }

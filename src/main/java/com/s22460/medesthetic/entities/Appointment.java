@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Future;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -13,7 +14,6 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@ToString
 public class Appointment {
 
     @Id
@@ -39,5 +39,8 @@ public class Appointment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private AppoService appoService;
+
+    private boolean reminderSent;
+    private LocalDateTime reminderScheduledTime;
 
 }

@@ -1,8 +1,9 @@
-.main-heading {
+.main-heading-admin {
     font-size: 24px;
     color: #635447;
     margin-bottom: 20px;
 }
+
 .admin-tab {
     display: flex;
     flex-direction: column;
@@ -23,7 +24,8 @@
 }
 
 .admin-info li {
-    background-color: #f2f2f2;
+    background-color: #635447;
+    color: white;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;

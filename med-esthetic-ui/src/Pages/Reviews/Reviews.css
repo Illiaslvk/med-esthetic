@@ -1,4 +1,135 @@
-.start {
-  font-size: 48px; 
+.reviews-page {
+  width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: papayawhip;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-heading-rev {
   text-align: center;
+  padding: 50px 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.main-heading-rev h2,
+.main-heading-rev p {
+  margin-bottom: 10px;
+}
+
+.main-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #e0cebb;
+  color: #635447;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+}
+
+.main-button:hover {
+  background-color: #c4b29e;
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+}
+
+.review-table th,
+.review-table td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.review-table th {
+  background-color: #635447;
+  color: #fff;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.review-table td {
+  background-color: #ffffff;
+  color: #635447;
+}
+
+.edit-button-rev,
+.delete-button-rev {
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+  width: 80px;
+  text-align: center;
+  display: inline-block;
+}
+
+.edit-button-rev {
+  background-color: #e0cebb;
+  color: #635447;
+  margin-left: 5px;
+}
+
+.delete-button-rev {
+  background-color: #d9534f;
+  color: white;
+}
+
+
+.edit-review-form {
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 30px;
+}
+
+.edit-review-form h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .reviews-page{
+    width: 95%;
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .main-heading-rev{
+    padding: 30px 0;
+  }
+
+  .main-heading-rev h2{
+    font-size: 1.5rem;
+  }
+
+  .review-table th,
+  .review-table td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .main-button {
+    padding: 8px 16px;
+  }
+
+  .edit-button-rev,
+  .delete-button-rev {
+    padding: 6px 12px;
+    font-size: 12px;
+    width: 70px;
+  }
+
 }

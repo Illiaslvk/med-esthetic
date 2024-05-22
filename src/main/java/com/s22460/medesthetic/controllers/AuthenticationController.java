@@ -4,7 +4,9 @@ import com.s22460.medesthetic.dtos.auth.JwtAuthenticationResponse;
 import com.s22460.medesthetic.dtos.auth.RefreshTokenRequest;
 import com.s22460.medesthetic.dtos.auth.SignUpRequest;
 import com.s22460.medesthetic.dtos.auth.SigninRequest;
+import com.s22460.medesthetic.entities.BannedUser;
 import com.s22460.medesthetic.entities.User;
+import com.s22460.medesthetic.repository.BannedUserRepository;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.impl.auth.AuthenticationService;
 import com.s22460.medesthetic.services.impl.auth.JWTService;
@@ -36,6 +38,7 @@ public class AuthenticationController {
     private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
+    private final BannedUserRepository bannedUserRepository;
 
     @CrossOrigin
     @PostMapping("/signup")
@@ -45,7 +48,11 @@ public class AuthenticationController {
 
     @CrossOrigin
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
+    public ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
+        BannedUser bannedUser = bannedUserRepository.findByEmail(signinRequest.getEmail());
+        if (bannedUser != null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is banned. Reason: " + bannedUser.getReason());
+        }
         JwtAuthenticationResponse jwtResponse = authenticationService.signin(signinRequest, response);
         UserDetails userDetails = userDetailsService.loadUserByUsername(signinRequest.getEmail());
 

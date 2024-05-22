@@ -5,6 +5,7 @@ import com.s22460.medesthetic.entities.AppoService;
 import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.AppoServiceService;
+import com.s22460.medesthetic.services.EmailService;
 import com.s22460.medesthetic.services.UserService;
 import com.s22460.medesthetic.utils.NotFoundException;
 import com.s22460.medesthetic.utils.Role;
@@ -35,6 +36,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final AppoServiceService appoServiceService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     //Admin
     @GetMapping("/admin/users")
@@ -141,8 +143,8 @@ public class UserController {
             if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
                 AvailableSlotsDTO workSlot = new AvailableSlotsDTO();
                 workSlot.setDayOfWeek(dayOfWeek);
-                workSlot.setStartTime(LocalTime.of(8, 0)); // Start time is 8 am
-                workSlot.setEndTime(LocalTime.of(17, 0)); // End time is 5 pm
+                workSlot.setStartTime(LocalTime.of(10, 0)); // Start time is 8 am
+                workSlot.setEndTime(LocalTime.of(19, 0)); // End time is 5 pm
                 workHours.add(workSlot);
             }
         }
@@ -215,9 +217,23 @@ public class UserController {
     }
 
     @PutMapping("/updateUserById/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable Long id, @RequestBody User user) {
-        User updatedUser = userService.updateUser(id, user);
-        return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable Long id, @RequestBody UserDTO userDTO) {
+        try {
+            User userToUpdate = userRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("User not found"));
+
+            // Update user details
+            userToUpdate.setFirstName(userDTO.getFirstName());
+            userToUpdate.setLastName(userDTO.getLastName());
+            userToUpdate.setEmail(userDTO.getEmail());
+
+            User updatedUser = userRepository.save(userToUpdate);
+            return ResponseEntity.ok(UserDTO.fromEntity(updatedUser));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @DeleteMapping("/deleteUserById/{id}")
@@ -291,6 +307,14 @@ public class UserController {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new NotFoundException("User not found"));
         return ResponseEntity.ok(UserDTO.fromEntity(user));
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<UserDTO> getUserRoles(@AuthenticationPrincipal UserDetails userDetails) {
+        User user = userService.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        UserDTO userDTO = UserDTO.fromEntity(user);
+        return ResponseEntity.ok(userDTO);
     }
 
 }

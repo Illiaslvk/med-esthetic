@@ -16,6 +16,7 @@ public class BannedUserDTO {
     private Long id;
     private String reason;
     private String userName;
+    private String email;
     private Long userId;
 
     public static BannedUserDTO fromEntity(BannedUser bannedUser) {
@@ -24,6 +25,7 @@ public class BannedUserDTO {
         dto.setReason(bannedUser.getReason());
         dto.setUserName(bannedUser.getUser().getFirstName() + " " + bannedUser.getUser().getLastName());
         dto.setUserId(bannedUser.getUser().getId());
+        dto.setEmail(bannedUser.getEmail());
 
         return dto;
     }

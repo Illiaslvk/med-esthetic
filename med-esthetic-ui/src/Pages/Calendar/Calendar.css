@@ -10,6 +10,7 @@
 .fc-prev-button, .fc-next-button, .fc-today-button {
     background-color: #635447 !important;
     border-color: #635447 !important;
+    margin-top: 5px !important;
 }
 
 .fc-prev-button:hover, .fc-next-button:hover, .fc-today-button:hover {
@@ -51,7 +52,6 @@
     --fc-event-border-color: #48392f;
 }
 
-
 .fc-daygrid-event-dot{
     color: #171717 !important;
 }
@@ -74,4 +74,66 @@
 }
 .fc-event-main-frame, .fc-event-main{
     background-color: #48392f !important;
+}
+
+.appointment-toggle-button {
+    background-color: #635447 !important;
+    border-color: #635447 !important;
+    color: white !important;
+    width: 170px !important;
+    font-size: 13px !important;
+}
+
+.appointment-toggle-button:hover {
+    background-color: #48392f !important;
+    border-color: #48392f !important;
+}
+
+@media (max-width: 768px) {
+    .calendar-area {
+        margin-left: 0;
+        padding: 10px;
+    }
+
+    .fc-toolbar.fc-header-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .fc-toolbar-chunk {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .fc-toolbar-title {
+        font-size: 18px;
+    }
+
+    .fc-toolbar .fc-button-group {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .fc-toolbar .fc-button {
+        flex: 1;
+        margin: 2px;
+    }
+
+    .appointment-toggle-button {
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .fc-daygrid-event {
+        font-size: 12px;
+    }
+
+    .fc-list-item-title, .fc-list-item-time {
+        font-size: 14px;
+    }
+
+    .fc-theme-standard .fc-list-day-cushion {
+        font-size: 14px;
+    }
 }

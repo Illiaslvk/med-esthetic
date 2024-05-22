@@ -1,0 +1,144 @@
+.common-form-rev {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 40px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.common-form-rev h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #635447;
+    text-align: center;
+}
+
+.common-form-rev form {
+    display: flex;
+    flex-direction: column;
+}
+
+.common-form-rev label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #635447;
+    font-weight: bold;
+}
+
+.common-form-rev input,
+.common-form-rev textarea {
+    padding: 10px;
+    border: 1px solid #635447;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #635447;
+    font-size: 14px;
+}
+
+.common-form-rev textarea {
+    margin-top: 10px;
+    resize: vertical;
+}
+
+.common-form-rev button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.common-form-rev button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.common-form-rev button[type="button"] {
+    background-color: #dc3545;
+    color: white;
+}
+
+.common-form-rev button:hover {
+    opacity: 0.9;
+}
+
+.common-form-edit {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 40px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px;
+}
+
+.common-form-edit h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #635447;
+    text-align: center;
+}
+
+.common-form-edit form {
+    display: flex;
+    flex-direction: column;
+}
+
+.common-form-edit label {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #635447;
+    font-weight: bold;
+}
+
+.common-form-edit input,
+.common-form-edit textarea {
+    padding: 10px;
+    border: 1px solid #635447;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #635447;
+    font-size: 14px;
+}
+
+.common-form-edit textarea {
+    margin-top: 10px;
+    resize: vertical;
+}
+
+.common-form-edit button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.common-form-edit button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.common-form-edit button[type="submit"]:hover {
+    opacity: 0.9;
+}
+
+.common-form-edit button[type="button"] {
+    background-color: #dc3545;
+    color: white;
+}
+
+.common-form-edit button[type="button"]:hover {
+    opacity: 0.9;
+}
+

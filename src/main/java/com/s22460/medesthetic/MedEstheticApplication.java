@@ -4,13 +4,14 @@ import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.utils.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
+//@EnableScheduling
 public class MedEstheticApplication implements CommandLineRunner {
 
     @Autowired
@@ -29,7 +30,7 @@ public class MedEstheticApplication implements CommandLineRunner {
 
             user.setEmail("admin@gmail.com");
             user.setFirstName("admin");
-            user.setLastName("admin");
+            user.setLastName("god");
             user.setRole(Role.ADMIN);
             user.setPassword(new BCryptPasswordEncoder().encode("admin"));
 

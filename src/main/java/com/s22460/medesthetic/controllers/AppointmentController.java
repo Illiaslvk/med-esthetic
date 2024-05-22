@@ -1,6 +1,7 @@
 package com.s22460.medesthetic.controllers;
 
 import com.s22460.medesthetic.dtos.AppointmentDTO;
+import com.s22460.medesthetic.dtos.CancelAppointmentRequestDTO;
 import com.s22460.medesthetic.dtos.CreateAppointmentRequestDTO;
 import com.s22460.medesthetic.entities.AppoService;
 import com.s22460.medesthetic.entities.Appointment;
@@ -8,7 +9,6 @@ import com.s22460.medesthetic.entities.User;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.AppoServiceService;
 import com.s22460.medesthetic.services.AppointmentService;
-import com.s22460.medesthetic.services.UserService;
 import com.s22460.medesthetic.utils.NotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -65,9 +64,9 @@ public class AppointmentController {
     }
 
     @PostMapping("/appointments/cancel/{appointmentId}")
-    public ResponseEntity<String> cancelAppointment(@PathVariable Long appointmentId,@RequestBody String cancellationReason) {
+    public ResponseEntity<String> cancelAppointment(@PathVariable Long appointmentId, @RequestBody CancelAppointmentRequestDTO cancelRequest) {
         try {
-            appointmentService.cancelAppointment(appointmentId, cancellationReason);
+            appointmentService.cancelAppointment(appointmentId, cancelRequest.getCancellationReason());
             return new ResponseEntity<>("Appointment canceled successfully", HttpStatus.OK);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -78,16 +77,31 @@ public class AppointmentController {
         }
     }
 
+    @DeleteMapping("/appointments/delete/{appointmentId}")
+    public ResponseEntity<String> deleteAppointment(@PathVariable Long appointmentId) {
+        try {
+            appointmentService.deleteAppointment(appointmentId);
+            return new ResponseEntity<>("Appointment deleted successfully", HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/appointments/create")
     public ResponseEntity<AppointmentDTO> createAppointment(@Valid @RequestBody CreateAppointmentRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        Appointment appointment = appointmentService.createAppointment(requestDTO, user);
-        AppointmentDTO appointmentDTO = AppointmentDTO.fromEntity(appointment);
-        return new ResponseEntity<>(appointmentDTO, HttpStatus.CREATED);
+        try {
+            Appointment appointment = appointmentService.createAppointment(requestDTO, user);
+            AppointmentDTO appointmentDTO = AppointmentDTO.fromEntity(appointment);
+            return new ResponseEntity<>(appointmentDTO, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-
 
     @GetMapping("/appointments/employee/{employeeId}/date/{date}/booked-times")
     public ResponseEntity<List<String>> getBookedTimesForDate(@PathVariable Long employeeId, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -96,7 +110,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/appo/all")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<List<AppointmentDTO>> getAllBookedAppointments() {
         List<Appointment> bookedAppo = appointmentService.getAllBookedAppo();
         List<AppointmentDTO> bookedAppoDTOs = bookedAppo.stream()
@@ -129,4 +143,5 @@ public class AppointmentController {
     private Long getUserIdFromUserDetails(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername()).get().getId();
     }
+
 }

@@ -6,7 +6,8 @@ const EditServiceForm = ({ service, onSubmit, onCancel }) => {
     const [updatedService, setUpdatedService] = useState({
         serviceName: service.serviceName,
         duration: service.duration,
-        price: service.price
+        price: service.price,
+        description: service.description // Add description field
     });
 
     const handleChange = (e) => {
@@ -43,6 +44,10 @@ const EditServiceForm = ({ service, onSubmit, onCancel }) => {
                 <label>
                     Price:
                     <input type="number" name="price" value={updatedService.price} onChange={handleChange} />
+                </label>
+                <label>
+                    Description:
+                    <input type="text" name="description" value={updatedService.description} onChange={handleChange} />
                 </label>
                 <button type="submit">Save</button>
                 <button type="button" onClick={onCancel}>Cancel</button>

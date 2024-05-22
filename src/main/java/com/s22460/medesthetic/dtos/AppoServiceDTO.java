@@ -13,6 +13,7 @@ public class AppoServiceDTO {
     private String serviceName;
     private int duration;
     private String price;
+    private String description;
 
     public static AppoServiceDTO fromEntity(AppoService appoService) {
         AppoServiceDTO dto = new AppoServiceDTO();
@@ -20,6 +21,7 @@ public class AppoServiceDTO {
         dto.setServiceName(appoService.getServiceName());
         dto.setDuration(appoService.getDuration());
         dto.setPrice(appoService.getPrice());
+        dto.setDescription(appoService.getDescription());
         return dto;
     }
 }

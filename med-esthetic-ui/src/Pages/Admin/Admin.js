@@ -7,6 +7,8 @@ import { fetchAllUsers } from '../../Components/services/userService';
 import AdminTab from "../../Components/AdminProfile/AdminTab";
 import ServiceList from "../../Components/AdminProfile/ServiceList";
 import BannedUserList from "../../Components/AdminProfile/BannedUserList";
+import AppointmentList from "../../Components/AdminProfile/AppointmentList"
+import CancelledAppointments from "../../Components/AdminProfile/CancelledAppointments"
 
 const Admin = () => {
     const { activepage } = useParams()
@@ -67,7 +69,8 @@ const Admin = () => {
                                                               handleChange={handleChange} />}
                     {activepage === "servicelist" && <ServiceList /> }
                     {activepage === "bannedlist" && <BannedUserList />}
-
+                    {activepage === "appolist" && <AppointmentList />}
+                    {activepage === "cancelledappos" && <CancelledAppointments />}
                 </div>
             </div>
         </div>

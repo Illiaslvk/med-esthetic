@@ -61,8 +61,11 @@ public class User implements UserDetails {
 
     // Blocking users
     private boolean banned;
-    public void banUser() {this.banned = true;}
-    public void unbanUser() {this.banned = false;}
+
+    private boolean remindersEnabled = true;
+
+//    public void banUser() {this.banned = true;}
+//    public void unbanUser() {this.banned = false;}
 
     //Check role
     public boolean isAdmin() {return Role.ADMIN.equals(this.role);}

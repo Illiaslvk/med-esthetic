@@ -1,4 +1,72 @@
-.start {
-    font-size: 48px;
+.service-list-page {
+    width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: papayawhip;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.service-header-container-page {
     text-align: center;
+    padding: 50px 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.service-header-container-page h1 {
+    margin-bottom: 10px;
+}
+
+.service-table-page {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+}
+
+.service-table-page th,
+.service-table-page td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.service-table-page th {
+    background-color: #635447;
+    color: #fff;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.service-table-page td {
+    background-color: #ffffff;
+    color: #635447;
+}
+
+@media (max-width: 768px) {
+    .service-list-page{
+        width: 95%;
+        margin: 10px auto;
+        padding: 10px;
+    }
+
+    .service-header-container-page{
+        padding: 30px 0;
+    }
+
+    .service-header-container-page h1{
+        font-size: 1.5rem;
+    }
+
+    .service-table-page th,
+    .service-table-page td{
+        font-size: 14px;
+        padding: 8px;
+    }
 }
