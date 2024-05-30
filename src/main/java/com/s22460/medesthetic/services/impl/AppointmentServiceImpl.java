@@ -9,6 +9,7 @@ import com.s22460.medesthetic.repository.AppoServiceRepository;
 import com.s22460.medesthetic.repository.UserRepository;
 import com.s22460.medesthetic.services.AppointmentService;
 import com.s22460.medesthetic.services.EmailService;
+import com.s22460.medesthetic.services.HolidayService;
 import com.s22460.medesthetic.utils.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final UserRepository userRepository;
     private final AppoServiceRepository appoServiceRepository;
     private final EmailService emailService;
+    private final HolidayService holidayService;
 
     @Override
     public List<Appointment> getAllAppointments() {
@@ -49,7 +51,6 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new NotFoundException("Appointment not found with ID: " + appointmentId));
     }
 
-    @Transactional
     public Appointment createAppointment(CreateAppointmentRequestDTO requestDTO, User user) {
         AppoService appoService = appoServiceRepository.findById(requestDTO.getServiceId())
                 .orElseThrow(() -> new NotFoundException("AppoService not found with ID: " + requestDTO.getServiceId()));
@@ -62,6 +63,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         if (hasUserMultipleBookings(requestDTO.getDate(), requestDTO.getTime(), user.getEmail())) {
             throw new IllegalArgumentException("User already has an appointment at the requested time.");
+        }
+
+        if (holidayService.isHoliday(requestDTO.getEmployeeId(), requestDTO.getDate())) {
+            throw new IllegalStateException("Cannot book appointment on a holiday");
         }
 
         Appointment appointment = new Appointment();
@@ -83,6 +88,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         if (appointment.isCanceled()) {
             throw new IllegalArgumentException("Appointment is already canceled");
+        }
+
+        LocalDateTime appointmentDateTime = appointment.getDate().atTime(LocalTime.parse(appointment.getTime().split("-")[0]));
+        LocalDateTime now = LocalDateTime.now();
+
+        if (appointmentDateTime.isBefore(now.plusHours(2))) {
+            throw new IllegalArgumentException("Cannot cancel the appointment less than 2 hours before the appointment time");
         }
 
         appointment.setCanceled(true);
@@ -127,17 +139,38 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private boolean isOverlappingAppointment(LocalDate date, String time, Long employeeId) {
         List<Appointment> appointments = appointmentRepository.findByUserIdAndDate(employeeId, date);
-        return appointments.stream().anyMatch(appointment -> appointment.getTime().equals(time));
+        for (Appointment appointment : appointments) {
+            // Check if the requested time matches an existing appointment time
+            if (appointment.getTime().equals(time)) {
+                return true;
+            }
+            // Split the booked time
+            String[] bookedTimeRange = appointment.getTime().split("-");
+            String bookedStartTime = bookedTimeRange[0];
+            String bookedEndTime = bookedTimeRange[1];
+            // Split the requested time
+            String[] requestedTimeRange = time.split("-");
+            String requestedStartTime = requestedTimeRange[0];
+            String requestedEndTime = requestedTimeRange[1];
+
+            if (requestedStartTime.equals(bookedStartTime) || requestedEndTime.equals(bookedEndTime)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasUserMultipleBookings(LocalDate date, String time, String userEmail) {
-        List<Appointment> appointments = appointmentRepository.findByUserEmailAndDateAndTime(userEmail, date, time);
-        return !appointments.isEmpty();
+        List<Appointment> appointments = appointmentRepository.findByUserEmailAndDate(userEmail, date);
+        //check if any of the appointments match the requested time
+        return appointments.stream().anyMatch(appointment -> appointment.getTime().equals(time));
     }
 
     private void scheduleReminder(Appointment appointment) {
-        LocalDateTime appointmentDateTime = appointment.getDate().atTime(LocalTime.parse(appointment.getTime()));
-        LocalDateTime reminderTime = appointmentDateTime.minusHours(2);
+        String startTime = appointment.getTime().split("-")[0];//split string[10:00-11:00] in 2 arrays and take 1st
+        System.out.println("scheduleReminder startTime"+startTime);
+        LocalDateTime appoDateTime = appointment.getDate().atTime(LocalTime.parse(startTime));
+        LocalDateTime reminderTime = appoDateTime.minusHours(2);
         appointment.setReminderScheduledTime(reminderTime);
         appointment.setReminderSent(false);
     }

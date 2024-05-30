@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -44,8 +45,13 @@ public class User implements UserDetails {
     @NotNull
     private Role role;
 
-    // Connections
+    private boolean banned;
 
+    private boolean remindersEnabled = true;
+
+    private LocalDateTime lastLoginTime;
+
+    // Connections
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Appointment> appointments = new HashSet<>();
 
@@ -58,18 +64,6 @@ public class User implements UserDetails {
     //for EMP
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AvailableSlots> availableSlots;
-
-    // Blocking users
-    private boolean banned;
-
-    private boolean remindersEnabled = true;
-
-//    public void banUser() {this.banned = true;}
-//    public void unbanUser() {this.banned = false;}
-
-    //Check role
-    public boolean isAdmin() {return Role.ADMIN.equals(this.role);}
-    public boolean isEmployee() {return Role.EMPLOYEE.equals(this.role);}
 
     //  JWT
     // UserDetails have getPassword/Username
@@ -102,6 +96,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-
 }

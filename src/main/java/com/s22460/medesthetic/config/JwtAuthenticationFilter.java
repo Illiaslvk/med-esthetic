@@ -55,52 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-//            throws ServletException, IOException {
-//        String jwt = extractJwtFromCookies(request);
-//        String userEmail = null;
-//
-//        if (jwt != null) {
-//            userEmail = jwtService.extractUserName(jwt);
-//        }
-//
-//        if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//            UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
-//            if (userDetails != null && jwtService.isTokenValid(jwt, userDetails)) {
-//                System.out.println("Token is valid for user: " + userEmail);
-//                setSecurityContext(userDetails, request);
-//                System.out.println("Current token: " + jwt);
-//                // Check if the token is about to expire or has expired
-//                if (jwtService.isTokenAboutToExpire(jwt)) {
-//                    System.out.println("Refreshing JWT token for user: " + userEmail);
-//                    String newJwt = jwtService.generateTokenBasedOnRole(userDetails);
-//                    System.out.println("New JWT token generated: " + newJwt);
-//                    setNewTokenInResponseCookies(response, newJwt);
-//                }
-//            }
-//        }
-//        filterChain.doFilter(request, response);
-//    }
-
-//        if (jwt != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//            UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
-//            if (jwtService.isTokenValid(jwt, userDetails)) {
-//                System.out.println("Token is valid for user: " + userEmail);
-//                setSecurityContext(userDetails, request);
-//
-//                // Check if the token should be refreshed
-////                if (jwtService.shouldTokenBeRefreshed(jwt)) {
-//                    System.out.println("Refreshing JWT token for user: " + userEmail);
-//                    String newJwt = jwtService.generateTokenBasedOnRole(userDetails);
-//                    System.out.println("New JWT token generated: " + newJwt);
-//                    setNewTokenInResponseCookies(response, newJwt);
-////                }
-//
-//            }
-//        }
-
-
     private void setSecurityContext(UserDetails userDetails, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

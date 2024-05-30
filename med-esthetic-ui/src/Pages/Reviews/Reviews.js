@@ -53,7 +53,7 @@ const Reviews = () => {
         setEditReview(review);
     };
 
-    const handleUpdateReview = (updatedReview) => {
+    const handleUpdateReview = () => {
         setEditReview(null);
         fetchReviews();
     };

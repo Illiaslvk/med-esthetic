@@ -82,10 +82,6 @@ public class AppoServiceServiceImpl implements AppoServiceService {
         // Set the user for the service
         appoService.setUser(user);
 
-        // Add the service to the user's services
-        //user.getServices().add(appoService);
-
-        // Save both user and service
         userRepository.save(user);
         appoServiceRepository.save(appoService);
     }

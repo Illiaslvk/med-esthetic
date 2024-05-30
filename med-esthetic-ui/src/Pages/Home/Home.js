@@ -16,7 +16,7 @@ const Home = () => {
                 </div>
                 <div className="home-testimonials">
                     <h2>What Our Clients Say</h2>
-                    <p>"I had an amazing experience at MedEsthetic. Highly recommend!" - Jane Doe</p>
+                    <p>"I had an amazing experience at MedEsthetic. Highly recommend!"</p>
                 </div>
             </section>
             <footer className="home-footer">

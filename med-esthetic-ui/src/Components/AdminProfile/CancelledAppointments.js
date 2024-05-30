@@ -49,6 +49,7 @@ const CancelledAppointments = () => {
                         <th>Date</th>
                         <th>Time</th>
                         <th>Employee</th>
+                        <th>User</th>
                         <th>Reason</th>
                         <th>Action</th>
                     </tr>
@@ -59,6 +60,7 @@ const CancelledAppointments = () => {
                             <td>{appointment.date}</td>
                             <td>{appointment.time}</td>
                             <td>{appointment.empName}</td>
+                            <td>{appointment.userEmail}</td>
                             <td>{appointment.cancellationReason}</td>
                             <td>
                                 <button className="delete-button" onClick={() => handleDeleteAppointment(appointment.id)}>Delete</button>

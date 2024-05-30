@@ -7,7 +7,7 @@ const EditServiceForm = ({ service, onSubmit, onCancel }) => {
         serviceName: service.serviceName,
         duration: service.duration,
         price: service.price,
-        description: service.description // Add description field
+        description: service.description
     });
 
     const handleChange = (e) => {

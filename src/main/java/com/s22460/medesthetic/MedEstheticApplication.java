@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
-//@EnableScheduling
 public class MedEstheticApplication implements CommandLineRunner {
 
     @Autowired

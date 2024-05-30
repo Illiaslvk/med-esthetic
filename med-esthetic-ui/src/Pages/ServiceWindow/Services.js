@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { request } from "../api/axios_helper";
 import 'react-toastify/dist/ReactToastify.css';
-import './Services.css'
+import './Services.css';
+
 const Services = () => {
     const [serviceList, setServiceList] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         fetchServiceList();
@@ -22,10 +24,27 @@ const Services = () => {
         }
     };
 
+    const handleSearchChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const filteredServiceList = serviceList.filter(service =>
+        service.serviceName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className='service-list-page'>
             <div className="service-header-container-page">
                 <h1 className="main-heading-service">Welcome to our Service page!</h1>
+            </div>
+            <div className="search-container">
+                <input
+                    type="text"
+                    placeholder="Search services by name..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    className="search-input"
+                />
             </div>
             <div className="table-container">
                 <table className='service-table-page'>
@@ -38,7 +57,7 @@ const Services = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {serviceList.map(service => (
+                    {filteredServiceList.map(service => (
                         <tr key={service.id}>
                             <td>{service.serviceName}</td>
                             <td>{service.duration} minutes</td>

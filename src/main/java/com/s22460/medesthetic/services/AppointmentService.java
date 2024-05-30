@@ -20,6 +20,4 @@ public interface AppointmentService {
     List<Appointment> getAllBookedAppoForEmployee(Long employeeId);
     void deleteAppointment(Long appointmentId);
 
-//    List<Appointment> getAllAppointmentsWithReminders();
-
 }

@@ -19,13 +19,3 @@ export const searchUsersByName = async (name) => {
         throw error;
     }
 };
-
-export const fetchMessages = async () => {
-    try {
-        const response = await request("GET", "/messages");
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching messages:", error);
-        throw error;
-    }
-};

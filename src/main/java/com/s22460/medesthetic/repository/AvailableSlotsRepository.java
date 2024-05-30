@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface AvailableSlotsRepository extends JpaRepository<AvailableSlots, Long> {
     List<AvailableSlots> findByUserId(Long employeeId);
-//    List<AvailableSlots> findByUserIdAndDate(Long employeeId, LocalDate date);
 }

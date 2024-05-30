@@ -12,8 +12,6 @@ public interface JWTService {
     String generateTokenBasedOnRole(UserDetails userDetails);
     boolean isTokenValid(String token, UserDetails userDetails);
     boolean isTokenAboutToExpire(String token);
-    //    String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails);
     boolean isRefreshTokenValid(String token, UserDetails userDetails);
-
     boolean isTokenExpired(String token);
 }

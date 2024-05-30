@@ -9,7 +9,7 @@ export const useAuthFormState = () => {
   });
 
   const handleChange = (field, value) => {
-    setState({ ...state, [field]: value });
+    setState((prevState) => ({ ...prevState, [field]: value }));
   };
 
   return [state, handleChange];

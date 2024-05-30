@@ -3,8 +3,6 @@ import { request } from '../../Pages/api/axios_helper';
 import { toast } from 'react-toastify';
 import './AdminProfile.css';
 import CancelAppointmentForm from './Forms/CancelAppointmentForm';
-import BanUserForm from './Forms/BanUserForm';
-import BannedUserList from './BannedUserList';
 
 const AppointmentList = () => {
     const [appointments, setAppointments] = useState([]);
@@ -65,7 +63,7 @@ const AppointmentList = () => {
     return (
         <div className="appointment-list">
             <h1>Appointment List</h1>
-            <div>
+            <div className="appo-table-wrapper">
                 <table>
                     <thead>
                     <tr>

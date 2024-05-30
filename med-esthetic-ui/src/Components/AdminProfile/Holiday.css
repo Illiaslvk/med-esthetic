@@ -1,0 +1,221 @@
+.manage-holiday-container {
+    width: 100%;
+    height: 100%;
+    background-color: papayawhip;
+    padding: 15px;
+}
+
+.holiday-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.main-heading-holiday {
+    font-size: 24px;
+    color: #635447;
+    margin: 0;
+}
+
+.add-holiday-button {
+    padding: 10px 20px;
+    background-color: #e0cebb;
+    color: #635447;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.add-holiday-button:hover {
+    background-color: #c4b29e;
+}
+
+.holiday-list {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.holiday-list h3 {
+    font-size: 20px;
+    color: #635447;
+    margin-bottom: 15px;
+}
+
+.holiday-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.holiday-table th,
+.holiday-table td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.holiday-table th {
+    background-color: #635447;
+    color: #ffffff;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.holiday-table td {
+    background-color: #ffffff;
+    color: #635447;
+}
+
+.add-holiday-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: papayawhip;
+    padding: 30px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.add-holiday-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #635447;
+    text-align: center;
+}
+
+.add-holiday-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-holiday-form .form-group {
+    margin-bottom: 20px;
+}
+
+.add-holiday-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #635447;
+    font-weight: bold;
+}
+
+.add-holiday-form input[type="date"],
+.add-holiday-form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #635447;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #635447;
+    font-size: 14px;
+}
+
+.add-holiday-form button[type="submit"],
+.add-holiday-form button[type="button"] {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.add-holiday-form button[type="submit"] {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.add-holiday-form button[type="button"] {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.add-holiday-form button:hover {
+    opacity: 0.9;
+}
+
+.header3{
+    margin-bottom: 5px;
+}
+.add-holiday-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #635447;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #635447;
+    font-size: 14px;
+}
+@media (max-width: 768px) {
+    .main-heading-holiday {
+        font-size: 1.5rem;
+    }
+
+    .add-holiday-button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .holiday-header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .holiday-header-container .add-holiday-button {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .holiday-table th,
+    .holiday-table td {
+        font-size: 14px;
+    }
+
+    .holiday-table {
+        table-layout: auto;
+    }
+
+    .holiday-table th,
+    .holiday-table td {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+
+    .holiday-table tr {
+        margin-bottom: 10px;
+        display: block;
+        border-radius: 5px;
+    }
+
+    .add-holiday-form {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .add-holiday-form h2 {
+        font-size: 1.5rem;
+    }
+
+    .add-holiday-form input[type="date"],
+    .add-holiday-form input[type="text"],
+    .add-holiday-form select {
+        font-size: 1rem;
+    }
+
+    .add-holiday-form button[type="submit"],
+    .add-holiday-form button[type="button"] {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+}

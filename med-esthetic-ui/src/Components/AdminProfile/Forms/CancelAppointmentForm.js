@@ -7,7 +7,6 @@ const CancelAppointmentForm = ({ onSubmit, onCancel, cancelReason, onReasonChang
         event.preventDefault();
         try {
             await onSubmit();
-            onCancel();
         } catch (error) {
             console.error('Error canceling appointment:', error.message);
             toast.error('Failed to cancel appointment');

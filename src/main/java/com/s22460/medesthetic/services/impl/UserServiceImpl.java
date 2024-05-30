@@ -1,9 +1,6 @@
 package com.s22460.medesthetic.services.impl;
 
-import com.s22460.medesthetic.dtos.AvailableSlotsDTO;
-import com.s22460.medesthetic.dtos.BannedUserDTO;
-import com.s22460.medesthetic.dtos.Mapper;
-import com.s22460.medesthetic.dtos.UserDTO;
+import com.s22460.medesthetic.dtos.*;
 import com.s22460.medesthetic.entities.AvailableSlots;
 import com.s22460.medesthetic.entities.BannedUser;
 import com.s22460.medesthetic.entities.User;
@@ -14,6 +11,7 @@ import com.s22460.medesthetic.services.UserService;
 import com.s22460.medesthetic.utils.NotFoundException;
 import com.s22460.medesthetic.utils.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
@@ -45,8 +44,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setLastLoginTime(LocalDateTime.now());
+        userRepository.save(user);
+        return user;
     }
 
     @Override
@@ -182,5 +184,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
     }
 
+    @Override
+    public void changePassword(String email, ChangePasswordRequestDTO changePasswordRequestDTO) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
+        String newPasswordEncoded = changePasswordRequestDTO.getNewPassword();
+        user.setPassword(newPasswordEncoded);
+        userRepository.save(user);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?") // Runs daily at midnight
+    public void deleteInactiveUsers() {
+        LocalDateTime sixMonthsAgo = LocalDateTime.now().minusMonths(6);
+        List<User> inactiveUsers = userRepository.findByLastLoginTimeBefore(sixMonthsAgo);
+        userRepository.deleteAll(inactiveUsers);
+    }
 }

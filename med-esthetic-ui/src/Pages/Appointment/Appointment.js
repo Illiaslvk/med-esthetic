@@ -16,8 +16,9 @@ const Appointment = () => {
     date: "",
     time: "",
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [bookedTimes, setBookedTimes] = useState([]);
+  const [availableTimes, setAvailableTimes] = useState([]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -32,16 +33,11 @@ const Appointment = () => {
         setUser(response.data);
         setFormData((prevData) => ({
           ...prevData,
-          lastName: `${response.data.lastName}`,
+          lastName: response.data.lastName,
           userEmail: response.data.email,
         }));
-      } else {
-        console.error("Failed to fetch user details");
-        toast.error("Failed to fetch user details. Please log in.");
-
-      }
-    } catch (error) {
-      console.error("Error fetching user details: ", error.message);
+      }} catch (error) {
+      toast.error("Please log in.");
     }
   };
 
@@ -60,16 +56,14 @@ const Appointment = () => {
         console.error("Failed to fetch employees");
       }
     } catch (error) {
-      console.error("Error fetching employees: ", error.message);
+      console.error("Error fetching employees:", error.message);
     }
   };
 
   const fetchAssignedServices = async (employeeId) => {
     try {
       const response = await request("GET", `/employees/${employeeId}/services`);
-      console.log("Response:", response);
-      if (response && response.status === 200) {
-        console.log("Assigned services:", response.data);
+      if (response.status === 200) {
         setAssignedServices(response.data);
       } else {
         console.error("Failed to fetch assigned services");
@@ -82,7 +76,7 @@ const Appointment = () => {
   const handleEmployeeChange = (e) => {
     setSelectedEmployee(e.target.value);
     setFormData({ ...formData, employeeId: e.target.value });
-    setAssignedServices([]); //reset services if emp changes
+    setAssignedServices([]); // Reset services if employee changes
   };
 
   const handleInputChange = (e) => {
@@ -92,32 +86,42 @@ const Appointment = () => {
 
   const handleDateChange = async (e) => {
     const selectedDate = e.target.value;
+    setFormData({ ...formData, date: selectedDate });
 
     try {
-      const response = await request("GET", `/appointments/employee/${selectedEmployee}/date/${selectedDate}/booked-times`);
-      if (!response.data) {
-        throw new Error('No data received');
+      const bookedTimesResponse = await request("GET", `/appointments/employee/${selectedEmployee}/date/${selectedDate}/booked-times`);
+      if (bookedTimesResponse.status === 200) {
+        setBookedTimes(bookedTimesResponse.data);
+      } else {
+        throw new Error('Failed to fetch booked times');
       }
-      const bookedTimes = response.data;
-      setBookedTimes(bookedTimes);
+
+      const holidayResponse = await request("GET", `/holidays/employee/${selectedEmployee}/date/${selectedDate}`);
+      if (holidayResponse.data.isHoliday) {
+        toast.error('Cannot book appointment on a holiday');
+        setAvailableTimes([]); // Clear available times if its a holiday
+      } else {
+        const availableTimes = Array.from({ length: 9 }, (_, index) => index + 10)
+            .filter(hour => {
+              const time = `${hour}:00-${hour + 1}:00`;
+              const dayOfWeek = new Date(selectedDate).getDay();
+              // Check if the current time slot is booked
+              const isBooked = bookedTimesResponse.data.some(bookedTime => {
+                // "some" - method used to check if any of the booked times conflict with the current time slot
+                const [bookedStart, bookedEnd] = bookedTime.split('-');
+                const [start, end] = time.split('-');
+                return bookedStart === start || bookedEnd === end;
+              });
+              return !isBooked && dayOfWeek !== 0 && dayOfWeek !== 6 && time !== "13:00";
+            })
+            .map(hour => `${hour}:00-${hour + 1}:00`);
+        setAvailableTimes(availableTimes);
+      }
     } catch (error) {
-      console.error('Error fetching booked times:', error.message);
-      toast.error('Error fetching booked times');
+      toast.error('Error fetching booked times or holiday status');
     }
   };
 
-  const availableTimes = Array.from({ length: 9 }, (_, index) => index + 10)
-      .filter(hour => {
-        const time = `${hour}:00`;
-        const selectedDate = new Date(formData.date);
-        const dayOfWeek = selectedDate.getDay();
-        return !bookedTimes.includes(time) && dayOfWeek !== 0 && dayOfWeek !== 6 && time !== "13:00";
-      })
-      .map(hour => (
-          <option key={hour} value={`${hour}:00`}>
-            {`${hour}:00-${hour + 1}:00`}
-          </option>
-      ));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,26 +131,28 @@ const Appointment = () => {
     }
 
     if (!formData.employeeId) {
-      toast.error("Please start from employee.");
+      toast.error("Please select an employee.");
       return;
     }
 
     try {
       const response = await request("POST", "/appointments/create", formData);
       if (response.status === 201) {
-        console.log("Appointment booked successfully!");
         toast.success("Appointment booked successfully!");
+
+        // Remove the booked time from availableTimes
+        const newBookedTime = formData.time;
+        setAvailableTimes(prevTimes => prevTimes.filter(time => time !== newBookedTime));
+        setFormData({ ...formData, time: '' });
+
         navigate("/");
       } else {
-        console.error("Failed to book appointment");
-        toast.error("Failed to book appointment")
+        toast.error("Failed to book appointment");
       }
     } catch (error) {
-      console.error("Error booking appointment:", error.message);
       toast.error("Error booking appointment");
     }
   };
-
 
 
   return (
@@ -182,14 +188,16 @@ const Appointment = () => {
           </div>
           <div className="form-row">
             <div className="input">
-              <input type="date" name="date" value={formData.date} onChange={(e) => {handleInputChange(e); handleDateChange(e);}} required/>
+              <input type="date" name="date" value={formData.date} onChange={handleDateChange} required />
             </div>
           </div>
           <div className="form-row">
             <div className="input">
               <select name="time" value={formData.time} onChange={handleInputChange} required>
                 <option value="">Select Time</option>
-                {availableTimes}
+                {availableTimes.map((time, index) => (
+                    <option key={index} value={time}>{time}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -204,4 +212,3 @@ const Appointment = () => {
   );
 };
 
-export default Appointment;

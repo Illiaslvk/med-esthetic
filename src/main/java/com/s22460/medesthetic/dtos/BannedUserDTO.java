@@ -21,12 +21,12 @@ public class BannedUserDTO {
 
     public static BannedUserDTO fromEntity(BannedUser bannedUser) {
         BannedUserDTO dto = new BannedUserDTO();
-        dto.setId(bannedUser.getId());
-        dto.setReason(bannedUser.getReason());
-        dto.setUserName(bannedUser.getUser().getFirstName() + " " + bannedUser.getUser().getLastName());
-        dto.setUserId(bannedUser.getUser().getId());
-        dto.setEmail(bannedUser.getEmail());
-
+        dto.id = bannedUser.getId();
+        dto.reason = bannedUser.getReason();
+        dto.userName = bannedUser.getUser().getFirstName() + " " + bannedUser.getUser().getLastName();
+        dto.userId = bannedUser.getUser().getId();
+        dto.email = bannedUser.getEmail();
         return dto;
     }
+
 }

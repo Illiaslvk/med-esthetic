@@ -12,6 +12,7 @@ import com.s22460.medesthetic.utils.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +39,6 @@ public class UserController {
     private final UserRepository userRepository;
     private final AppoServiceService appoServiceService;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
 
     //Admin
     @GetMapping("/admin/users")
@@ -129,7 +131,7 @@ public class UserController {
         User user = userService.getUserById(userId);
         if (user != null) {
             userService.clearAvailabilitySlots(userId);
-            // Assign work hours from 8 am to 5 pm on weekdays
+            // Assign work hours from 10 am to 7 pm on weekdays
             List<AvailableSlotsDTO> workHours = generateWorkHours();
             for (AvailableSlotsDTO slot : workHours) {
                 userService.addAvailabilitySlot(userId, slot);
@@ -143,8 +145,8 @@ public class UserController {
             if (dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
                 AvailableSlotsDTO workSlot = new AvailableSlotsDTO();
                 workSlot.setDayOfWeek(dayOfWeek);
-                workSlot.setStartTime(LocalTime.of(10, 0)); // Start time is 8 am
-                workSlot.setEndTime(LocalTime.of(19, 0)); // End time is 5 pm
+                workSlot.setStartTime(LocalTime.of(10, 0)); // Start time is 10 am
+                workSlot.setEndTime(LocalTime.of(19, 0)); // End time is 7 pm
                 workHours.add(workSlot);
             }
         }
@@ -255,7 +257,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    // USED IN FRONT
     @GetMapping("/user/details")
     public ResponseEntity<UserDTO> getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
@@ -315,6 +316,22 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         UserDTO userDTO = UserDTO.fromEntity(user);
         return ResponseEntity.ok(userDTO);
+    }
+
+    @PutMapping("/user/change-password")
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+        String email = userDetails.getUsername();
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        // Validate old password
+        if (!passwordEncoder.matches(changePasswordRequestDTO.getCurrentPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Old password is incorrect");
+        }
+        // Encode new password
+        changePasswordRequestDTO.setNewPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+        userService.changePassword(email, changePasswordRequestDTO);
+
+        return ResponseEntity.ok("Password changed successfully");
     }
 
 }

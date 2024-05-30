@@ -19,12 +19,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByCanceledFalse();
     List<Appointment> findByUserEmailAndCanceledFalse(String userEmail);
     List<Appointment> findByUserIdAndCanceledFalse(Long employeeId);
-
-    @Query("SELECT a FROM Appointment a WHERE a.userEmail = :userEmail AND a.date = :date AND a.time = :time AND a.canceled = false")
-    List<Appointment> findByUserEmailAndDateAndTime(@Param("userEmail") String userEmail, @Param("date") LocalDate date, @Param("time") String time);
-
-    List<Appointment> findByDateAndTime(LocalDate date, String time);
-
-    //@Query("SELECT a FROM Appointment a WHERE a.date = :date AND a.time = :time AND a.canceled = false")
-    //    List<Appointment> findByReminderTime(@Param("date") LocalDate date, @Param("time") LocalTime time);
+    List<Appointment> findByUserEmailAndDate(String userEmail, LocalDate date);
 }

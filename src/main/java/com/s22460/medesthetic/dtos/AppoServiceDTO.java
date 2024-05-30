@@ -17,12 +17,13 @@ public class AppoServiceDTO {
 
     public static AppoServiceDTO fromEntity(AppoService appoService) {
         AppoServiceDTO dto = new AppoServiceDTO();
-        dto.setId(appoService.getId());
-        dto.setServiceName(appoService.getServiceName());
-        dto.setDuration(appoService.getDuration());
-        dto.setPrice(appoService.getPrice());
-        dto.setDescription(appoService.getDescription());
+        dto.id = appoService.getId();
+        dto.serviceName = appoService.getServiceName();
+        dto.duration = appoService.getDuration();
+        dto.price = appoService.getPrice();
+        dto.description = appoService.getDescription();
         return dto;
     }
+
 }
 

@@ -48,7 +48,6 @@
   margin-bottom: 30px;
 }
 
-/* Styles for home-services */
 .home-services-container {
   display: flex;
   justify-content: center;
@@ -123,7 +122,6 @@ button:hover {
   transition: transform 0.3s ease;
 }
 
-/*box for message*/
 .row {
   display: flex;
   justify-content: center;

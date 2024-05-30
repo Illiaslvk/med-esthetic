@@ -101,66 +101,6 @@
     color: inherit;
 }
 
-@media (max-width: 800px) {
-    .form,
-    .s1,
-    .s2 {
-        width: 100%;
-        padding: 10px 20px;
-    }
-
-    .form-group {
-        width: 97%;
-        margin: 10px;
-    }
-
-    .main-heading {
-        font-size: 20px;
-    }
-
-    .form-group label {
-        font-size: 16px;
-    }
-}
-
-@media (max-width: 500px) {
-    .user-sidebar {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-        padding: 10px;
-    }
-
-    .s1,
-    .s2 {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        padding: 3px;
-    }
-
-    .s1 {
-        background-color: white;
-        border-radius: 25px;
-        cursor: pointer;
-        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-        padding: 5px 20px;
-    }
-
-    .s2 {
-        border-radius: 25px;
-        cursor: pointer;
-        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-        padding: 5px 20px;
-    }
-
-    span {
-        font-size: 12px;
-    }
-}
-
 /* YourAppointments component */
 .your-appo {
     display: flex;
@@ -170,6 +110,10 @@
     height: 100%;
     background-color: papayawhip;
     padding: 15px;
+}
+.admin-employee th:nth-child(6),/*index of the User column */
+.admin-employee td:nth-child(6) {
+    width: 200px;
 }
 
 .appo-table-wrapper {
@@ -221,4 +165,104 @@
 .your-appo-table tr td .main-button {
     background-color: #c4b29e;
     color: #fff;
+}
+
+@media (max-width: 768px) {
+    .main-heading {
+        font-size: 1.5rem;
+    }
+
+    .main-button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .form {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .form-group {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .s1, .s2 {
+        justify-content: center;
+    }
+
+    .s1 svg, .s2 svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .your-appo {
+        padding: 10px;
+    }
+
+    .appo-table-wrapper {
+        max-height: 300px;
+    }
+
+    .your-appo-table th, .your-appo-table td {
+        font-size: 14px;
+    }
+
+    .your-appo-table tr td button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .your-appo-table {
+        table-layout: auto;
+    }
+
+    .your-appo-table th, .your-appo-table td {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+
+    .your-appo-table th {
+        font-size: 1rem;
+        text-align: left;
+    }
+
+    .your-appo-table td {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .your-appo-table tr {
+        margin-bottom: 10px;
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .your-appo-table tr td button {
+        width: 100%;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .user-sidebar {
+        width: 100%;
+        display: flex;
+    }
+
+    .user-sidebar .s1, .user-sidebar .s2 {
+        justify-content: center;
+        padding: 15px 5px;
+    }
+
+    .user-sidebar .s1 span, .user-sidebar .s2 span {
+        display: none;
+    }
+
+    .user-sidebar .s1 svg, .user-sidebar .s2 svg {
+        margin-right: 0;
+    }
 }

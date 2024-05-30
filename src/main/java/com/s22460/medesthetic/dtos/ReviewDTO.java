@@ -27,4 +27,5 @@ public class ReviewDTO {
         this.userId = review.getUser().getId();
         this.userName = review.getUser().getFirstName();
     }
+
 }

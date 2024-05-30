@@ -46,8 +46,8 @@ const Calendar = () => {
                 const appointments = response.data;
                 console.log('Fetched appointments:', appointments);
                 const events = appointments.map(appointment => {
-                    const startDateTime = `${appointment.date}T${appointment.time}`;
-                    const endDateTime = `${appointment.date}T${appointment.time}`;
+                    const startDateTime = `${appointment.date}T${appointment.time.split('-')[0]}`;
+                    const endDateTime = `${appointment.date}T${appointment.time.split('-')[1]}`;
                     let borderColor;
                     if (showAllAppointments) {
                         borderColor = getEmployeeColor(appointment.employeeId);

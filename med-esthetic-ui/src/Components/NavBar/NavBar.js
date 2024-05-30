@@ -94,6 +94,11 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
                         <Link className='stylenone' to="/admin/admintab">Admin Panel</Link>{" "}{menu === "admin" ? <hr /> : <></>}
                     </li>
                 )}
+                {isLoggedIn && mobileMenuOpen && (
+                    <li onClick={() => setMenu("profile")}>
+                        <Link className='stylenone' to="/user/myprofile">My Profile</Link>{" "}{menu === "profile" ? <hr /> : <></>}
+                    </li>
+                )}
                 <li className="mobile-login-item">
                     {isLoggedIn ? (
                         <div onClick={handleLogout}>Log out</div>
@@ -102,6 +107,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
                     )}
                 </li>
             </ul>
+
 
             <div className="nav-login">
                 {isLoggedIn && location.pathname !== "/login" ? (
@@ -114,7 +120,6 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn }) => {
                         {menu === "userOptions" && (
                             <div className="user-options">
                                 <Link className="options" to="/user/myprofile">My Profile</Link>
-                                <Link className="options" to="/user/appointments">Appointments</Link>
                                 <Link className="options" to="/calendar">Calendar</Link>
                                 {isAdmin && (
                                     <Link className="options" to="/admin/admintab"> Admin </Link>

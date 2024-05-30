@@ -2,32 +2,39 @@ import { useState } from 'react';
 
 export const useAuthFormErrors = () => {
   const [signupErrors, setSignupErrors] = useState({
-    firstNameError: false,
-    lastNameError: false,
-    emailError: false,
-    passwordError: false,
+    firstNameError: '',
+    lastNameError: '',
+    emailError: '',
+    passwordError: '',
   });
 
   const [loginErrors, setLoginErrors] = useState({
-    emailError: false,
-    passwordError: false,
+    emailError: '',
+    passwordError: '',
   });
 
   const resetSignupErrors = () => {
     setSignupErrors({
-      firstNameError: false,
-      lastNameError: false,
-      emailError: false,
-      passwordError: false,
+      firstNameError: '',
+      lastNameError: '',
+      emailError: '',
+      passwordError: '',
     });
   };
 
   const resetLoginErrors = () => {
     setLoginErrors({
-      emailError: false,
-      passwordError: false,
+      emailError: '',
+      passwordError: '',
     });
   };
 
-  return [signupErrors, setSignupErrors, resetSignupErrors, loginErrors, setLoginErrors, resetLoginErrors];
+  return {
+    signupErrors,
+    setSignupErrors,
+    resetSignupErrors,
+    loginErrors,
+    setLoginErrors,
+    resetLoginErrors
+  };
 };

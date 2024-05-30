@@ -6,7 +6,6 @@ axios.defaults.withCredentials = true
 let retryCount = 0;
 const MAX_RETRIES = 5;
 
-// Axios Response Interceptor
 axios.interceptors.response.use(
   (response) => {
     return response
@@ -20,7 +19,6 @@ axios.interceptors.response.use(
         localStorage.removeItem("userRoles")
         return Promise.reject(error);
       }
-      // Attempt to refresh the token
       console.log("Attempting to refresh token...")
 
       retryCount++;
@@ -34,7 +32,6 @@ axios.interceptors.response.use(
           }
         })
         .catch((refreshError) => {
-          // Handle failed refresh (redirect to login)
           localStorage.removeItem("userRoles")
           console.error("Token refresh failed:", refreshError)
         })

@@ -1,65 +1,108 @@
 import React, { useState, useEffect } from 'react';
 import './UserProfile.css';
-import {request} from "../../Pages/api/axios_helper";
+import { request } from "../../Pages/api/axios_helper";
+import CancelAppointmentForm from '../AdminProfile/Forms/CancelAppointmentForm';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const YourAppointments = () => {
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState(0);
+const YourAppointments = ({ userRole }) => {
   const [appointmentData, setAppointmentData] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isCancelFormVisible, setIsCancelFormVisible] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [cancelReason, setCancelReason] = useState('');
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        // const response = await request('GET', '/appointments', {});
         const response = await request('GET', '/appo/booked', {});
         if (response.status !== 200) {
           throw new Error('Failed to fetch appointment data');
         }
         setAppointmentData(response.data);
       } catch (error) {
-        console.error(error);
+        setErrorMessage(error.message);
       }
     };
 
     fetchAppointments();
-  }, []); // Empty dependency array to ensure the effect runs only once on component mount
+  }, []);
 
-  const handleViewAppointment = (appointmentId) => {
+  const handleCancelAppointment = async () => {
+    try {
+      const response = await request('POST', `/appointments/cancel/${selectedAppointmentId}`, { cancellationReason: cancelReason });
+      if (response.status !== 200) {
+        throw new Error('Failed to cancel appointment');
+      }
+      setAppointmentData(appointmentData.filter(app => app.id !== selectedAppointmentId));
+      toast.success('Appointment canceled successfully');
+      closeCancelForm();
+    } catch (error) {
+      setErrorMessage(error.message);
+      toast.error('Failed to cancel appointment');
+    }
+  };
+
+  const openCancelForm = (appointmentId) => {
     setSelectedAppointmentId(appointmentId);
+    setIsCancelFormVisible(true);
+  };
+
+  const closeCancelForm = () => {
+    setSelectedAppointmentId(null);
+    setIsCancelFormVisible(false);
+    setCancelReason('');
+  };
+
+  const handleReasonChange = (event) => {
+    setCancelReason(event.target.value);
   };
 
   return (
       <div className='your-appo'>
         <h1 className='main-heading'>Appointments History</h1>
+        {errorMessage && <p className='error-message'>{errorMessage}</p>}
         <div className='appo-table-wrapper'>
-          <table className='your-appo-table'>
+          <table className={`your-appo-table ${userRole === "ADMIN" || userRole === "EMPLOYEE" ? "admin-employee" : ""}`}>
             <thead>
             <tr>
-              <th scope='col'>Service Name</th>
-              <th scope='col'>Date</th>
-              <th scope='col'>Time</th>
-              <th scope='col'>Duration</th>
-              <th scope='col'>Employee</th>
-              <th scope='col'>View</th>
+              <th>Service Name</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Duration</th>
+              <th>Employee</th>
+              {(userRole === "ADMIN" || userRole === "EMPLOYEE") && <th>User</th>}
+              <th>Actions</th>
             </tr>
             </thead>
             <tbody>
             {appointmentData.map((appointment) => (
                 <tr key={appointment.id}>
-                  <td data-label='Service Name'>{appointment.serviceName}</td>
-                  <td data-label='Date'>{appointment.date}</td>
-                  <td data-label='Time'>{appointment.time}</td>
-                  <td data-label='Duration'>{appointment.duration}</td>
-                  <td data-label='EmpName'>{appointment.empName}</td>
-                  <td data-label='View'>
-                    <button className='main-button' onClick={() => handleViewAppointment(appointment.id)}>View</button>
+                  <td>{appointment.serviceName}</td>
+                  <td>{appointment.date}</td>
+                  <td>{appointment.time}</td>
+                  <td>{appointment.duration}</td>
+                  <td>{appointment.empName}</td>
+                  {(userRole === "ADMIN" || userRole === "EMPLOYEE") && <td>{appointment.userEmail}</td>}
+                  <td>
+                    <button className="cancel-button" onClick={() => openCancelForm(appointment.id)}>Cancel</button>
                   </td>
                 </tr>
             ))}
             </tbody>
           </table>
         </div>
+        {isCancelFormVisible && (
+            <CancelAppointmentForm
+                onSubmit={handleCancelAppointment}
+                onCancel={closeCancelForm}
+                cancelReason={cancelReason}
+                onReasonChange={handleReasonChange}
+            />
+        )}
+        <ToastContainer position="bottom-right" autoClose={3000} />
       </div>
   );
-}
+};
 
 export default YourAppointments;

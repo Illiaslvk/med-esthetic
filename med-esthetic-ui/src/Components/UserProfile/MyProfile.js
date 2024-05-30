@@ -99,13 +99,7 @@ const MyProfile = () => {
 
                     <div className='form-group-profile'>
                         <label htmlFor='remindersEnabled'>Enable Reminders</label>
-                        <input
-                            type='checkbox'
-                            name='remindersEnabled'
-                            id='remindersEnabled'
-                            checked={editedUser.remindersEnabled}
-                            onChange={handleToggle}
-                        />
+                        <input type='checkbox' name='remindersEnabled' id='remindersEnabled' checked={editedUser.remindersEnabled} onChange={handleToggle}/>
                     </div>
                 </form>
             )}

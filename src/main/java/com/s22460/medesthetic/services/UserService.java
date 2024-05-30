@@ -2,6 +2,7 @@ package com.s22460.medesthetic.services;
 
 import com.s22460.medesthetic.dtos.AvailableSlotsDTO;
 import com.s22460.medesthetic.dtos.BannedUserDTO;
+import com.s22460.medesthetic.dtos.ChangePasswordRequestDTO;
 import com.s22460.medesthetic.dtos.UserDTO;
 import com.s22460.medesthetic.entities.AvailableSlots;
 import com.s22460.medesthetic.entities.BannedUser;
@@ -33,5 +34,6 @@ public interface UserService {
     //for reviews page
     Optional<User> findByEmail(String email);
     void updateRemindersPreference(Long userId, boolean remindersEnabled);
+    void changePassword(String email, ChangePasswordRequestDTO changePasswordRequestDTO);
 
 }

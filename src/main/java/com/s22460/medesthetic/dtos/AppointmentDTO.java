@@ -31,7 +31,6 @@ public class AppointmentDTO {
         dto.empName = appointment.getUser().getFirstName() + " " + appointment.getUser().getLastName();
         dto.employeeId = appointment.getUser().getId();
         dto.userEmail = appointment.getUserEmail();
-
         dto.date = appointment.getDate().toString();
         dto.canceled = appointment.isCanceled();
         dto.time = (appointment.getTime());

@@ -79,4 +79,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return null;
     }
 
+    public void updatePassword(User user, String newPassword) {
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
 }

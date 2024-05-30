@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./LoginSignup.css";
 import AuthForm from "../hooks/AuthForm";
 import { request } from "../api/axios_helper";
@@ -9,29 +9,9 @@ import { useAuthFormErrors } from "../hooks/useAuthFormErrors";
 const LoginSignup = ({ setIsLoggedIn }) => {
     const [action, setAction] = useState("Sign Up");
     const [state, handleChange] = useAuthFormState();
-    const [signupErrors, setSignupErrors, resetSignupErrors, loginErrors, setLoginErrors, resetLoginErrors] = useAuthFormErrors();
+    const {signupErrors, setSignupErrors, resetSignupErrors, loginErrors, setLoginErrors, resetLoginErrors} = useAuthFormErrors();
     const [banReason, setBanReason] = useState(null);
-
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            try {
-                const response = await request("GET", "/auth/check-session");
-                if (response.data.isAuthenticated) {
-                    console.log("Session check response:", response.data);
-                    setIsLoggedIn(true);
-                } else {
-                    setIsLoggedIn(false);
-                }
-            } catch (error) {
-                console.error("Session check failed:", error);
-                setIsLoggedIn(false);
-            }
-        };
-
-        checkAuthentication();
-    }, [setIsLoggedIn]);
 
     const validateSignupForm = () => {
         const { firstName, lastName, email, password } = state;
@@ -147,6 +127,11 @@ const LoginSignup = ({ setIsLoggedIn }) => {
                     {action === "Login" ? "Confirm" : "Login"}
                 </button>
             </div>
+            {action === "Login" && (
+                <div className="password-reset-link">
+                    <Link className='stylenone' to="/request-password-reset">Forgot Password?</Link>
+                </div>
+            )}
         </div>
     );
 };

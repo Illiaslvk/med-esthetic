@@ -46,7 +46,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.signup(signUpRequest));
     }
 
-    @CrossOrigin
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
         BannedUser bannedUser = bannedUserRepository.findByEmail(signinRequest.getEmail());
@@ -57,28 +56,16 @@ public class AuthenticationController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(signinRequest.getEmail());
 
         // Set the JWT token in a cookie
-        Cookie authTokenCookie = new Cookie("auth_token", jwtResponse.getToken());
-        //authTokenCookie.setMaxAge(2*60); // 2 minute
-        authTokenCookie.setHttpOnly(true);
-        authTokenCookie.setSecure(true);
-        authTokenCookie.setPath("/");
-        response.addCookie(authTokenCookie);
+        setCookie(response, "auth_token", jwtResponse.getToken(), true, true, "/");
 
         // Set the refresh token in a separate cookie
-        Cookie refreshTokenCookie = new Cookie("refresh_token", jwtResponse.getRefreshToken());
-        // Check if the user has the ADMIN role for refresh token expiration
         int refreshTokenMaxAge = userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN"))
                 ? 12 * 60 * 60  // 12 hours for ADMIN
                 : 2 * 60 * 60;  // 2 hours for others
-        //refreshTokenCookie.setMaxAge(refreshTokenMaxAge);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        response.addCookie(refreshTokenCookie);
+        setCookie(response, "refresh_token", jwtResponse.getRefreshToken(), true, true, "/");
 
         // Extract roles from UserDetails and convert them to strings
         List<String> roles = userDetails.getAuthorities().stream()
-                //Lambda replaced with method reference
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         jwtResponse.setRoles(roles);
@@ -86,32 +73,19 @@ public class AuthenticationController {
         return ResponseEntity.ok(jwtResponse);
     }
 
-    @CrossOrigin
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletResponse response) {
         try {
             String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
 
-            // Check if the refresh token is still valid
             if (jwtService.isRefreshTokenValid(refreshTokenRequest.getToken(), userDetails)) {
-                // Generate a new access token
-                System.out.println("Refresh token is valid for user: " + userEmail);
                 String newToken = jwtService.generateToken(userDetails);
-//                String newToken = jwtService.generateTokenBasedOnRole(userDetails);
 
-                // Set the new token in a cookie
-                Cookie newTokenCookie = new Cookie("auth_token", newToken);
-                //newTokenCookie.setMaxAge((int) (jwtService.getAccessTokenExpiration() / 1000)); // Convert milliseconds to seconds
-                newTokenCookie.setHttpOnly(true);
-                newTokenCookie.setSecure(true);
-                newTokenCookie.setPath("/");
-                response.addCookie(newTokenCookie);
+                setCookie(response, "auth_token", newToken, true, true, "/");
 
-                // Return the new token along with the refresh token
                 return ResponseEntity.ok(new JwtAuthenticationResponse(newToken, refreshTokenRequest.getToken()));
             } else {
-                System.out.println("Refresh token is invalid or expired for user: " + userEmail);
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
             }
         } catch (UsernameNotFoundException e) {
@@ -120,8 +94,6 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid request");
         }
     }
-
-
     @CrossOrigin
     @GetMapping("/check-session")
     public ResponseEntity<?> checkSession(@AuthenticationPrincipal UserDetails userDetails) {
@@ -134,25 +106,28 @@ public class AuthenticationController {
         }
     }
 
-    @CrossOrigin
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        // Clear the authentication cookies
-        Cookie authTokenCookie = new Cookie("auth_token", null);
-        authTokenCookie.setMaxAge(0); // Immediate expiration
-        authTokenCookie.setHttpOnly(true);
-        authTokenCookie.setSecure(true);
-        authTokenCookie.setPath("/");
-        response.addCookie(authTokenCookie);
-
-        Cookie refreshTokenCookie = new Cookie("refresh_token", null);
-        refreshTokenCookie.setMaxAge(0); // Immediate expiration
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        response.addCookie(refreshTokenCookie);
-
+        clearCookie(response, "auth_token");
+        clearCookie(response, "refresh_token");
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    private void setCookie(HttpServletResponse response, String name, String value, boolean httpOnly, boolean secure, String path) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(httpOnly);
+        cookie.setSecure(secure);
+        cookie.setPath(path);
+        response.addCookie(cookie);
+    }
+
+    private void clearCookie(HttpServletResponse response, String name) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setMaxAge(0);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
 }

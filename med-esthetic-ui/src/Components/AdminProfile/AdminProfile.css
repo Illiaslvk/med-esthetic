@@ -100,6 +100,7 @@
     border-radius: 5px;
     cursor: pointer;
     outline: none;
+    margin-left: 5px;
 }
 
 .details-button:hover {
@@ -436,4 +437,89 @@
     background-color: #ffffff;
     color: #635447;
 }
+@media (max-width: 768px) {
+    .main-heading,
+    .main-heading-banned-user {
+        font-size: 1.5rem;
+    }
 
+    .main-button,
+    .add-service-button,
+    .assign-service-button,
+    .details-button,
+    .delete-button,
+    .ban-button,
+    .edit-button,
+    .delete-button-serv,
+    .unban-user-button,
+    .cancel-button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .search-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-container input[type='text'] {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .search-container .search-elements {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .admin-sidebar,
+    .service-header-container,
+    .banned-user-header-container {
+        flex-direction: column;
+    }
+
+    .service-header-container .button-container,
+    .banned-user-header-container {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .users-list .table-container,
+    .service-list .table-container,
+    .banned-user-list .table-container,
+    .appointment-list,
+    .cancelled-appointments {
+        overflow-x: auto;
+    }
+
+    .user-table,
+    .service-table,
+    .banned-user-table,
+    .appointment-list table,
+    .cancelled-appointments table {
+        width: 100%;
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-sidebar {
+        width: 100%;
+        display: flex;
+    }
+
+    .admin-sidebar .s1, .admin-sidebar .s2 {
+        justify-content: center;
+        padding: 15px 5px;
+    }
+
+    .admin-sidebar .s1 span, .admin-sidebar .s2 span {
+        display: none;
+    }
+
+    .admin-sidebar .s1 svg, .admin-sidebar .s2 svg {
+        margin-right: 0;
+    }
+}

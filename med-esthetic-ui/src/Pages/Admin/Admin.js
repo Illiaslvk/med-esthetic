@@ -9,6 +9,7 @@ import ServiceList from "../../Components/AdminProfile/ServiceList";
 import BannedUserList from "../../Components/AdminProfile/BannedUserList";
 import AppointmentList from "../../Components/AdminProfile/AppointmentList"
 import CancelledAppointments from "../../Components/AdminProfile/CancelledAppointments"
+import ManageHolidays from "../../Components/AdminProfile/ManageHolidays";
 
 const Admin = () => {
     const { activepage } = useParams()
@@ -62,7 +63,6 @@ const Admin = () => {
                 </div>
                 <div className="right">
                     {activepage === "admintab" && <AdminTab/>}
-                    {/* Pass users data to UsersList component */}
                     {activepage === "userslist" && <UsersList users={filteredUsers}
                                                               searchQuery={searchQuery}
                                                               handleSearch={handleSearch}
@@ -71,6 +71,7 @@ const Admin = () => {
                     {activepage === "bannedlist" && <BannedUserList />}
                     {activepage === "appolist" && <AppointmentList />}
                     {activepage === "cancelledappos" && <CancelledAppointments />}
+                    {activepage === "manageholidays" && <ManageHolidays />}
                 </div>
             </div>
         </div>
