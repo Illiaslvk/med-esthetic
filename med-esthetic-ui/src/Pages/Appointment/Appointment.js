@@ -5,6 +5,7 @@ import {toast} from 'react-toastify';
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Appointment.css";
+import LoginSignup from "../LoginSignup/LoginSignup";
 
 const Appointment = () => {
   const [employees, setEmployees] = useState([]);
@@ -212,3 +213,4 @@ const Appointment = () => {
   );
 };
 
+export default Appointment;

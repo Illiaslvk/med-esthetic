@@ -168,7 +168,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private void scheduleReminder(Appointment appointment) {
         String startTime = appointment.getTime().split("-")[0];//split string[10:00-11:00] in 2 arrays and take 1st
-        System.out.println("scheduleReminder startTime"+startTime);
+        System.out.println("scheduleReminder startTime "+startTime);
         LocalDateTime appoDateTime = appointment.getDate().atTime(LocalTime.parse(startTime));
         LocalDateTime reminderTime = appoDateTime.minusHours(2);
         appointment.setReminderScheduledTime(reminderTime);
