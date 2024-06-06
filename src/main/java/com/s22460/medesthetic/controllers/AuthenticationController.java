@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -40,7 +39,6 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final BannedUserRepository bannedUserRepository;
 
-    @CrossOrigin
     @PostMapping("/signup")
     public ResponseEntity<User> signup(@RequestBody SignUpRequest signUpRequest) {
         return ResponseEntity.ok(authenticationService.signup(signUpRequest));
@@ -94,7 +92,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid request");
         }
     }
-    @CrossOrigin
+
     @GetMapping("/check-session")
     public ResponseEntity<?> checkSession(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails != null) {
