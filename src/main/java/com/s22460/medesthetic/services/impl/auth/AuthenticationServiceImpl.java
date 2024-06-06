@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     // handle signup by saving user details to the database
     public User signup(SignUpRequest signUpRequest) {
+
+        Optional<User> existingUser = userRepository.findByEmail(signUpRequest.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("An account with this email already exists");
+        }
+
         User user = new User();
 
         user.setEmail(signUpRequest.getEmail());
