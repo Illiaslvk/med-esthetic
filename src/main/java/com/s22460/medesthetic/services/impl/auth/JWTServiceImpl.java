@@ -23,7 +23,7 @@ public class JWTServiceImpl implements JWTService {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    private static final long ACCESS_TOKEN_EXPIRATION = 3 * 60 * 1000; // 3 min
+    private static final long ACCESS_TOKEN_EXPIRATION = 10 * 60 * 1000; // 10 min
     private static final long REFRESH_TOKEN_EXPIRATION = 2 * 60 * 60 * 1000; // 2 hours
     private static final long ADMIN_REFRESH_TOKEN_EXPIRATION = 12 * 60 * 60 * 1000; // 12 hours for admin
 
@@ -78,7 +78,7 @@ public class JWTServiceImpl implements JWTService {
 
     public boolean isTokenAboutToExpire(String token) {
         Date expirationDate = extractExpiration(token);
-        return expirationDate.before(new Date(System.currentTimeMillis() + 5000));
+        return expirationDate.before(new Date(System.currentTimeMillis() + 60000));
     }
 
     private Date extractExpiration(String token) {

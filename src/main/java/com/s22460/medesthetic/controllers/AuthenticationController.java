@@ -116,6 +116,7 @@ public class AuthenticationController {
         cookie.setHttpOnly(httpOnly);
         cookie.setSecure(secure);
         cookie.setPath(path);
+        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
 
@@ -125,6 +126,7 @@ public class AuthenticationController {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
+        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
 
