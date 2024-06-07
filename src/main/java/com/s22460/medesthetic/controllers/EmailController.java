@@ -59,7 +59,7 @@ public class EmailController {
 
         User user = userOptional.get();
         String token = passwordResetTokenService.createPasswordResetToken(user);
-        String resetUrl = "https://med-esthetic-frontend.vercel.app/reset-password?token=" + token;
+        String resetUrl = "http://localhost:3000/reset-password?token=" + token;
 
         try {
             emailService.sendEmail(user.getEmail(), "Password Reset Request", "Click the link to reset your password: " + resetUrl);
